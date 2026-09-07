@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>特征值与特征向量</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root{--bg:#0a0b0e;--surface:#111317;--surface2:#16181d;--border:#1e2026;--border2:#272a31;--txt:#e6e7eb;--txt2:#9aa0a8;--txt3:#6b7078;--txt4:#3a3d42;--acc:#6e8ef5;--acc2:#8aa0f7;--acc-soft:rgba(110,142,245,.08);--ok:#7ec89c;--warn:#dcb366;--pink:#e08294;--teal:#6fc8d8}
+  *{box-sizing:border-box}html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:'Inter',system-ui,sans-serif;line-height:1.85;font-size:15.5px;-webkit-font-smoothing:antialiased}
+  #nav{position:fixed;top:0;left:0;width:240px;height:100vh;overflow-y:auto;background:var(--bg);border-right:1px solid var(--border);padding:24px 0;z-index:20}
+  #nav .brand{padding:0 20px 18px;font-weight:700;font-size:14px;color:var(--txt);border-bottom:1px solid var(--border);margin-bottom:14px}#nav .brand .s{display:block;font-size:11px;color:var(--txt3);font-weight:400;margin-top:2px}
+  #nav .grp{padding:0 20px;color:var(--txt4);font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin:16px 0 6px;font-weight:600}#nav a{display:block;padding:5px 20px;color:var(--txt2);font-size:13px;cursor:pointer;text-decoration:none;transition:color .15s}#nav a:hover{color:var(--txt)}#nav a.active{color:var(--acc)}
+  #progwrap{position:fixed;top:0;left:240px;right:0;height:2px;background:var(--border);z-index:30}#prog{height:100%;background:var(--acc);width:0;transition:width .15s}
+  main{margin-left:240px;max-width:780px;padding:64px 56px 160px}
+  .cover{padding-bottom:32px;border-bottom:1px solid var(--border);margin-bottom:40px}.cover .eyebrow{font-size:12px;color:var(--acc);letter-spacing:2px;text-transform:uppercase;font-weight:600}.cover h1{font-size:36px;font-weight:800;color:var(--txt);margin:10px 0 14px;line-height:1.2;letter-spacing:-0.02em}.cover .lead{font-size:16px;color:var(--txt2);max-width:620px;line-height:1.7}.meta{display:flex;gap:24px;margin-top:24px;flex-wrap:wrap}.meta .m{font-size:12px;color:var(--txt3)}.meta .m b{color:var(--txt2);font-weight:600}
+  h2{font-size:21px;font-weight:700;color:var(--txt);margin-top:56px;letter-spacing:-0.01em}h2 .n{color:var(--txt4);font-weight:500;margin-right:8px;font-variant-numeric:tabular-nums}h3{font-size:16px;font-weight:600;color:var(--txt);margin-top:32px}
+  p{margin:16px 0}.card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:22px 26px;margin:20px 0}.tag{display:block;font-size:10.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}.card.def .tag{color:var(--acc)}.card.thm .tag{color:var(--warn)}.card.eg .tag{color:var(--ok)}.card.tip .tag{color:var(--pink)}
+  .note{background:var(--surface2);border-radius:6px;padding:14px 18px;margin:18px 0;font-size:14.5px;color:var(--txt2)}.note b{color:var(--txt)}
+  .step{padding:10px 0 10px 20px;margin:8px 0;border-left:2px solid var(--border2);font-size:14.5px}.step .sn{display:inline-block;color:var(--txt4);font-weight:600;width:24px;margin-left:-20px;margin-right:8px;font-variant-numeric:tabular-nums}.step b{color:var(--acc2)}
+  .viz{margin:28px 0}.viz .vt{font-size:12px;color:var(--txt3);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}.viz h4{font-size:15px;font-weight:600;color:var(--txt);margin:0 0 8px}
+  canvas{display:block;background:#0c0d11;border:1px solid var(--border);border-radius:6px;margin:14px 0;max-width:100%}.ctrl{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin:10px 0;font-size:13px;color:var(--txt2)}.ctrl input[type=range]{accent-color:var(--acc);height:4px}.ctrl .val{color:var(--txt);font-family:'Inter',monospace;font-weight:600;font-size:13px}
+  .ka{display:block;text-align:center;margin:18px 0;overflow-x:auto;padding:6px 0;font-size:16px}
+  table{border-collapse:collapse;margin:16px 0;width:100%;font-size:13.5px}th,td{border:1px solid var(--border);padding:8px 12px;text-align:center}th{background:var(--surface2);color:var(--txt);font-weight:600}
+  .quiz{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:18px 24px;margin:16px 0}.quiz q{display:block;font-weight:600;color:var(--txt);margin-bottom:8px;font-size:15px}details{margin:6px 0}summary{cursor:pointer;color:var(--acc);font-size:13px;padding:4px 0;font-weight:500}summary:hover{color:var(--acc2)}.ans{background:var(--surface2);border-radius:6px;padding:14px 18px;margin-top:8px;font-size:14px;color:var(--txt2)}.ans b{color:var(--txt)}
+  .pill{display:inline-block;background:var(--acc-soft);color:var(--acc);padding:1px 9px;border-radius:4px;font-size:11.5px;font-weight:600;margin-right:8px}
+  .summary{background:var(--surface2);border-radius:8px;padding:24px 30px;margin:36px 0 0}.summary .st{font-size:11px;color:var(--txt3);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+  @media(max-width:900px){#nav{display:none}#progwrap{left:0}main{margin-left:0;padding:40px 24px}}
+</style>
+</head>
+<body>
+<nav id="nav">
+  <div class="brand">可视化数学<span class="s">线性代数 · 自学教材</span></div>
+  <div class="grp">本节</div>
+  <a class="active">封面</a>
+  <a onclick="go('def')">特征值与特征向量</a>
+  <a onclick="go('solve')">求法·特征方程</a>
+  <a onclick="go('prop')">特征值性质</a>
+  <a onclick="go('sim')">相似矩阵</a>
+  <a onclick="go('diag')">对角化</a>
+  <a onclick="go('sym')">实对称正交对角化</a>
+  <a onclick="go('eg')">例题精讲</a>
+  <a onclick="go('quiz')">练习</a>
+  <div class="grp">后续</div>
+  <a style="color:var(--txt4)">二次型</a>
+</nav>
+<div id="progwrap"><div id="prog"></div></div>
+<main>
+<div class="cover">
+  <div class="eyebrow">线性代数 · 第五章</div>
+  <h1>特征值与特征向量</h1>
+  <p class="lead">找矩阵作用后"方向不变、只伸缩"的方向--这就是特征向量,伸缩比是特征值。它是对角化、二次型、矩阵幂的核心。配 10 例 8 练。</p>
+  <div class="meta"><div class="m"><b>约 60 分钟</b></div><div class="m"><b>10 例题 · 8 练习</b></div><div class="m"><b>3 个交互演示</b></div></div>
+</div>
+
+<h2 id="def"><span class="n">01</span>特征值与特征向量</h2>
+<div class="card def"><span class="tag">定义</span>
+<p>设 $A$ 是 $n$ 阶方阵。若存在数 $\lambda$ 和非零向量 $\mathbf{x}$ 使</p>
+<p class="ka">$$A\mathbf{x}=\lambda\mathbf{x}$$</p>
+<p>则称 $\lambda$ 为 $A$ 的<b>特征值</b>,$\mathbf{x}$ 为对应 $\lambda$ 的<b>特征向量</b>。</p></div>
+<div class="note"><b>几何直觉</b>:矩阵 $A$ 把向量变换到新位置。特征向量是变换后<b>方向不变</b>(或反向)的特殊方向,只被"拉伸"$\lambda$ 倍。$\lambda>0$ 同向伸缩,$\lambda<0$ 反向伸缩,$\lambda=0$ 则 $A\mathbf{x}=0$(特征向量在零空间)。</div>
+
+<h2 id="solve"><span class="n">02</span>求法·特征方程</h2>
+<div class="card thm"><span class="tag">求特征值与特征向量</span>
+<p>由 $A\mathbf{x}=\lambda\mathbf{x}$ 得 $(\lambda E-A)\mathbf{x}=0$,这是齐次方程组,有非零解 $\Leftrightarrow$ 系数行列式为 0:</p>
+<p class="ka">$$|\lambda E-A|=0\quad\text{(特征方程)}$$</p>
+<p>① 解特征方程得特征值 $\lambda_i$;</p>
+<p>② 对每个 $\lambda_i$,解 $(\lambda_i E-A)\mathbf{x}=0$ 的基础解系,即对应特征向量。</p></div>
+<div class="note">$|\lambda E-A|$ 是 $\lambda$ 的 $n$ 次多项式,叫<b>特征多项式</b>。</div>
+<div class="viz">
+<div class="vt">交互演示</div>
+<h4>特征向量:方向不变的伸缩</h4>
+<p>蓝向量是任意向量(被 $A$ 变换后方向改变),绿向量是特征向量(变换后只伸缩 $\lambda$ 倍,方向不变)。拖任意向量角度,看它变换后何时与原方向共线。</p>
+<canvas id="cv1" width="780" height="280"></canvas>
+<div class="ctrl">
+  <label>向量角度 <span class="val" id="v1">30°</span></label>
+  <input type="range" id="s1" min="0" max="180" value="30" style="width:300px">
+  <span class="val" id="v1b">非特征方向</span>
+</div>
+</div>
+
+<h2 id="prop"><span class="n">03</span>特征值的性质</h2>
+<div class="card thm"><span class="tag">性质</span>
+<p>设 $A$ 的特征值为 $\lambda_1,\ldots,\lambda_n$(含重根),则</p>
+<p>① $\lambda_1+\cdots+\lambda_n=\operatorname{tr}(A)=a_{11}+\cdots+a_{nn}$(<b>迹</b>)</p>
+<p>② $\lambda_1\lambda_2\cdots\lambda_n=|A|$(<b>行列式</b>)</p>
+<p>③ $A$ 可逆 $\Leftrightarrow 0$ 不是 $A$ 的特征值</p>
+<p>④ 若 $\lambda$ 是 $A$ 的特征值,则 $\lambda^k$ 是 $A^k$ 的特征值,$\frac1\lambda$ 是 $A^{-1}$ 的特征值($\lambda\neq0$),$f(\lambda)$ 是 $f(A)$ 的特征值。</p>
+<p>⑤ <b>不同</b>特征值对应的特征向量<b>线性无关</b>。</p></div>
+
+<h2 id="sim"><span class="n">04</span>相似矩阵</h2>
+<div class="card def"><span class="tag">相似</span>
+<p>若存在可逆 $P$ 使 $P^{-1}AP=B$,称 $A$ 与 $B$ <b>相似</b>,记 $A\sim B$。</p></div>
+<div class="card thm"><span class="tag">相似不变量</span>
+<p>相似矩阵有:相同的特征值、相同的迹、相同的行列式、相同的秩、相同的特征多项式。</p></div>
+
+<h2 id="diag"><span class="n">05</span>对角化</h2>
+<div class="card thm"><span class="tag">可对角化条件</span>
+<p>$A$ 可对角化(相似于对角阵)$\Leftrightarrow$ $A$ 有 $n$ 个<b>线性无关</b>的特征向量。</p>
+<p>此时令 $P=(\mathbf{p}_1,\ldots,\mathbf{p}_n)$($\mathbf{p}_i$ 是特征向量),则</p>
+<p class="ka">$$P^{-1}AP=\Lambda=\operatorname{diag}(\lambda_1,\ldots,\lambda_n)$$</p></div>
+<div class="card tip"><span class="tag">判别(重根情形)</span>
+<p>若每个 $k$ 重特征值 $\lambda$ 恰有 $k$ 个线性无关特征向量(即 $r(\lambda E-A)=n-k$),则 $A$ 可对角化;否则不可。</p>
+<p><b>充分条件</b>:$A$ 有 $n$ 个<b>互不相同</b>的特征值 $\Rightarrow$ 可对角化(因不同特征值特征向量无关)。</p></div>
+
+<h2 id="sym"><span class="n">06</span>实对称矩阵的正交对角化</h2>
+<div class="card thm"><span class="tag">实对称矩阵的性质</span>
+<p>① 特征值全为<b>实数</b>。</p>
+<p>② <b>不同</b>特征值对应的特征向量<b>正交</b>。</p>
+<p>③ 必可<b>正交对角化</b>:存在正交矩阵 $Q$($Q^{-1}=Q^T$)使 $Q^TAQ=Q^{-1}AQ=\Lambda$。</p></div>
+<div class="card"><span class="tag" style="color:var(--acc)">正交对角化步骤</span>
+<div class="step"><span class="sn">01</span>求特征值 $\lambda_i$。</div>
+<div class="step"><span class="sn">02</span>对每个 $\lambda_i$ 求特征向量。同一特征值多个特征向量用<b>施密特正交化</b>;不同特征值的特征向量已正交。</div>
+<div class="step"><span class="sn">03</span>单位化所有特征向量,拼成正交矩阵 $Q$,则 $Q^TAQ=\Lambda$。</div></div>
+
+<h2 id="eg"><span class="n">07</span>例题精讲</h2>
+
+<div class="card eg"><span class="tag">例 1 · 二阶求特征</span>
+<p>求 $A=\begin{pmatrix}2&1\\1&2\end{pmatrix}$ 的特征值与特征向量。</p>
+<div class="step"><span class="sn">01</span>$|\lambda E-A|=\begin{vmatrix}\lambda-2&-1\\-1&\lambda-2\end{vmatrix}=(\lambda-2)^2-1=\lambda^2-4\lambda+3=(\lambda-1)(\lambda-3)$。</div>
+<div class="step"><span class="sn">02</span>$\lambda_1=1$:$\begin{pmatrix}-1&-1\\-1&-1\end{pmatrix}\mathbf{x}=0\Rightarrow x_1+x_2=0$,特征向量 $\mathbf{p}_1=(1,-1)^T$。</div>
+<div class="step"><span class="sn">03</span>$\lambda_2=3$:$\begin{pmatrix}1&-1\\-1&1\end{pmatrix}\mathbf{x}=0\Rightarrow x_1=x_2$,特征向量 $\mathbf{p}_2=(1,1)^T$。</div>
+<div class="step"><span class="sn">04</span>验证迹:$1+3=4=2+2$ ✓;行列式:$1\times3=3=|A|$ ✓。$\blacksquare$</div></div>
+
+<div class="card eg"><span class="tag">例 2 · 三角阵特征值</span>
+<p>求上三角阵 $\begin{pmatrix}1&2&3\\0&4&5\\0&0&6\end{pmatrix}$ 的特征值。</p>
+<div class="step"><span class="sn">01</span>三角阵特征值 = 主对角元素:$\lambda=1,4,6$。$\blacksquare$</div></div>
+
+<div class="card eg"><span class="tag">例 3 · 用性质</span>
+<p>$A$ 特征值为 $1,2,3$,求 $A^2-2A+E$ 的特征值与 $|A^2-2A+E|$。</p>
+<div class="step"><span class="sn">01</span>$f(\lambda)=\lambda^2-2\lambda+1=(\lambda-1)^2$。$f(A)$ 特征值 $=f(\lambda_i)$。</div>
+<div class="step"><span class="sn">02</span>$\lambda=1\to0$,$\lambda=2\to1$,$\lambda=3\to4$。特征值 $0,1,4$。</div>
+<div class="step"><span class="sn">03</span>$|f(A)|=0\times1\times4=0$。$\blacksquare$</div></div>
+
+<div class="card eg"><span class="tag">例 4 · 对角化</span>
+<p>判 $A=\begin{pmatrix}2&1\\1&2\end{pmatrix}$ 能否对角化,并求 $P$。</p>
+<div class="step"><span class="sn">01</span>例1得特征值 $1,3$(互异),必可对角化。</div>
+<div class="step"><span class="sn">02</span>$P=(\mathbf{p}_1,\mathbf{p}_2)=\begin{pmatrix}1&1\\-1&1\end{pmatrix}$,则 $P^{-1}AP=\begin{pmatrix}1&0\\0&3\end{pmatrix}$。$\blacksquare$</div></div>
+
+<div class="card eg"><span class="tag">例 5 · 不可对角化</span>
+<p>判 $A=\begin{pmatrix}1&1\\0&1\end{pmatrix}$ 能否对角化。</p>
+<div class="step"><span class="sn">01</span>$|\lambda E-A|=(\lambda-1)^2$,$\lambda=1$(二重)。</div>
+<div class="step"><span class="sn">02</span>$(E-A)=\begin{pmatrix}0&-1\\0&0\end{pmatrix}$,秩 1,$n-r=2-1=1<2$(重数)。</div>
+<div class="step"><span class="sn">03</span>线性无关特征向量只有 1 个 $<n=2$,<b>不可对角化</b>。$\blacksquare$</div></div>
+
+<div class="card eg"><span class="tag">例 6 · 实对称正交对角化</span>
+<p>求正交 $Q$ 使 $Q^TAQ=\Lambda$,$A=\begin{pmatrix}2&1\\1&2\end{pmatrix}$。</p>
+<div class="step"><span class="sn">01</span>特征值 $1,3$,特征向量 $\mathbf{p}_1=(1,-1)^T,\mathbf{p}_2=(1,1)^T$(例1)。</div>
+<div class="step"><span class="sn">02</span>不同特征值,已正交(验证 $(1,-1)\cdot(1,1)=0$ ✓)。</div>
+<div class="step"><span class="sn">03</span>单位化:$\mathbf{q}_1=\frac1{\sqrt2}(1,-1)^T$,$\mathbf{q}_2=\frac1{\sqrt2}(1,1)^T$。</div>
+<div class="step"><span class="sn">04</span>$Q=\frac1{\sqrt2}\begin{pmatrix}1&1\\-1&1\end{pmatrix}$,$Q^TAQ=\begin{pmatrix}1&0\\0&3\end{pmatrix}$。$\blacksquare$</div></div>
+
+<div class="card eg"><span class="tag">例 7 · 矩阵幂</span>
+<p>求 $A^{10}$,$A=\begin{pmatrix}2&1\\1&2\end{pmatrix}$。</p>
+<div class="step"><span class="sn">01</span>$A=P\Lambda P^{-1}$,则 $A^{10}=P\Lambda^{10}P^{-1}$。</div>
+<div class="step"><span class="sn">02</span>$\Lambda^{10}=\begin{pmatrix}1^{10}&0\\0&3^{10}\end{pmatrix}=\begin{pmatrix}1&0\\0&59049\end{pmatrix}$。</div>
+<div class="step"><span class="sn">03</span>$P=\begin{pmatrix}1&1\\-1&1\end{pmatrix}$,$P^{-1}=\frac12\begin{pmatrix}1&-1\\1&1\end{pmatrix}$。计算 $A^{10}=P\Lambda^{10}P^{-1}$。$\blacksquare$</div></div>
+
+<div class="card eg"><span class="tag">例 8 · 证明(不同特征值无关)</span>
+<p>证:不同特征值对应的特征向量线性无关(两个情形)。</p>
+<div class="step"><span class="sn">01</span>设 $A\mathbf{p}_1=\lambda_1\mathbf{p}_1$,$A\mathbf{p}_2=\lambda_2\mathbf{p}_2$,$\lambda_1\neq\lambda_2$。设 $k_1\mathbf{p}_1+k_2\mathbf{p}_2=0$。</div>
+<div class="step"><span class="sn">02</span>左乘 $A$:$k_1\lambda_1\mathbf{p}_1+k_2\lambda_2\mathbf{p}_2=0$。</div>
+<div class="step"><span class="sn">03</span>减去 $\lambda_1\times$原式:$k_2(\lambda_2-\lambda_1)\mathbf{p}_2=0$。$\mathbf{p}_2\neq0$,$\lambda_2\neq\lambda_1$,故 $k_2=0$,进而 $k_1=0$。无关。$\blacksquare$</div></div>
+
+<div class="card eg"><span class="tag">例 9 · 含参数</span>
+<p>$A=\begin{pmatrix}1&2\\2&1\end{pmatrix}$... 实际求 $\begin{pmatrix}a&1\\1&a\end{pmatrix}$ 特征值。</p>
+<div class="step"><span class="sn">01</span>$|\lambda E-A|=(\lambda-a)^2-1$,特征值 $\lambda=a\pm1$。$\blacksquare$</div></div>
+
+<div class="card eg"><span class="tag">例 10 · 相似</span>
+<p>$A=\begin{pmatrix}2&1\\1&2\end{pmatrix}$ 与 $B=\begin{pmatrix}1&0\\0&3\end{pmatrix}$ 相似吗?</p>
+<div class="step"><span class="sn">01</span>$A$ 特征值 $1,3$(例1),$B$ 特征值 $1,3$(对角阵)。</div>
+<div class="step"><span class="sn">02</span>$A$ 可对角化为 $\operatorname{diag}(1,3)=B$,故 $A\sim B$。$\blacksquare$</div></div>
+
+<h2 id="quiz"><span class="n">08</span>练习(8 题)</h2>
+<div class="quiz"><q>1. 求 $\begin{pmatrix}3&1\\0&2\end{pmatrix}$ 的特征值。</q>
+<details><summary>看详解</summary><div class="ans">三角阵,$\lambda=3,2$。</div></details></div>
+<div class="quiz"><q>2. 求 $\begin{pmatrix}0&1\\1&0\end{pmatrix}$ 的特征值与特征向量。</q>
+<details><summary>看详解</summary><div class="ans">$|\lambda E-A|=\lambda^2-1$,$\lambda=\pm1$。$\lambda=1$:$\mathbf{p}=(1,1)^T$;$\lambda=-1$:$\mathbf{p}=(1,-1)^T$。</div></details></div>
+<div class="quiz"><q>3. $A$ 特征值 $1,-1,2$,求 $|A|$ 和 $\operatorname{tr}(A)$。</q>
+<details><summary>看详解</summary><div class="ans">$|A|=1\times(-1)\times2=-2$,$\operatorname{tr}=1-1+2=2$。</div></details></div>
+<div class="quiz"><q>4. $A$ 特征值 $2,3$,求 $A^{-1}$ 特征值。</q>
+<details><summary>看详解</summary><div class="ans">$1/2,1/3$。</div></details></div>
+<div class="quiz"><q>5. 判 $\begin{pmatrix}3&0\\0&3\end{pmatrix}$ 能否对角化。</q>
+<details><summary>看详解</summary><div class="ans">已是对角阵,可对角化($P=E$)。</div></details></div>
+<div class="quiz"><q>6. $\begin{pmatrix}1&1\\0&1\end{pmatrix}$ 能对角化吗?</q>
+<details><summary>看详解</summary><div class="ans">例5,不可(二重根 $\lambda=1$ 只1个特征向量)。</div></details></div>
+<div class="quiz"><q>7. 实对称 $\begin{pmatrix}2&0\\0&4\end{pmatrix}$ 正交对角化的 $Q$?</q>
+<details><summary>看详解</summary><div class="ans">已对角,$Q=E$。</div></details></div>
+<div class="quiz"><q>8. 证:$A$ 与 $A^T$ 有相同特征值。</q>
+<details><summary>看详解</summary><div class="ans">$|\lambda E-A|=|\lambda E-A^T|$(转置不改变行列式),故同特征多项式,同特征值。</div></details></div>
+
+<div class="summary">
+<div class="st">本节小结</div>
+<p><span class="pill">定义</span>$A\mathbf{x}=\lambda\mathbf{x}$($\mathbf{x}\neq0$),方向不变只伸缩。</p>
+<p><span class="pill">求法</span>特征方程 $|\lambda E-A|=0$ 求 $\lambda$;$(\lambda E-A)\mathbf{x}=0$ 求特征向量。</p>
+<p><span class="pill">性质</span>特征值和=迹,积=行列式;不同特征值特征向量无关。</p>
+<p><span class="pill">相似</span>$P^{-1}AP=B$,同特征值/迹/行列式。</p>
+<p><span class="pill">对角化</span>$n$ 个无关特征向量 $\Leftrightarrow$ 可对角化 $P^{-1}AP=\Lambda$;重根需 $k$ 重有 $k$ 个。</p>
+<p><span class="pill">实对称</span>特征值实数,不同特征值正交,可正交对角化 $Q^TAQ=\Lambda$。</p>
+<p style="margin-top:16px;color:var(--txt3)"><b>下一章</b>:二次型--用对称矩阵表示二次齐次多项式,化标准形与判正定。</p>
+</div>
+</main>
+<script>
+window.addEventListener('load',()=>{if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});});
+function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+window.addEventListener('scroll',()=>{const sc=document.documentElement.scrollTop,h=document.documentElement.scrollHeight-document.documentElement.clientHeight;document.getElementById('prog').style.width=(sc/h*100)+'%';});
+// cv1: 特征向量方向不变
+const cv1=document.getElementById('cv1'),c1=cv1.getContext('2d');
+const s1=document.getElementById('s1'),v1=document.getElementById('v1'),v1b=document.getElementById('v1b');
+// A = [[2,0],[0,1]] 特征值2(方向x),1(方向y)。特征向量x轴、y轴
+function draw1(){
+  const ang=+s1.value; v1.textContent=ang+'°';
+  const rad=ang*Math.PI/180;
+  const ux=Math.cos(rad),uy=Math.sin(rad);
+  // A作用: [[2,0],[0,1]] (2,1) -> (2ux, uy)
+  const tx=2*ux, ty=1*uy;
+  // 是否共线: tx/ux == ty/uy 即 2==1? 只有 ux=0 或 uy=0(沿轴)
+  const isEV = (Math.abs(ux)<0.05 || Math.abs(uy)<0.05);
+  v1b.textContent = isEV?'特征方向(只伸缩)':'非特征(方向改变)';
+  const w=cv1.width,h=cv1.height;c1.clearRect(0,0,w,h);
+  const cx=w/2,cy=h/2,sc=80;
+  c1.strokeStyle='#1e2026';c1.lineWidth=1;c1.beginPath();c1.moveTo(20,cy);c1.lineTo(w-20,cy);c1.moveTo(cx,20);c1.lineTo(cx,h-20);c1.stroke();
+  // 原向量(蓝)
+  c1.strokeStyle='#6e8ef5';c1.lineWidth=2.5;
+  c1.beginPath();c1.moveTo(cx,cy);c1.lineTo(cx+ux*sc,cy-uy*sc);c1.stroke();
+  c1.fillStyle='#6e8ef5';c1.fillText('原向量',cx+ux*sc+6,cy-uy*sc);
+  // 变换后(绿/橙)
+  c1.strokeStyle = isEV?'#7ec89c':'#dcb366';
+  c1.beginPath();c1.moveTo(cx,cy);c1.lineTo(cx+tx*sc,cy-ty*sc);c1.stroke();
+  c1.fillStyle = isEV?'#7ec89c':'#dcb366';
+  c1.fillText('A·v',cx+tx*sc+6,cy-ty*sc);
+  c1.fillStyle='#9aa0a8';c1.font='12px Inter,monospace';
+  c1.fillText('A=diag(2,1): x方向伸缩2倍,y方向不变',cx-220,cy+130);
+  c1.fillText(isEV?'沿轴(特征方向):变换后仍共线,只伸缩':'斜方向:变换后方向改变(非特征)',cx-220,cy+150);
+}
+s1.oninput=draw1;draw1();
+</script>
+</body>
+</html>

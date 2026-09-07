@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>导数与微分</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root{
+    --bg:#0a0b0e; --surface:#111317; --surface2:#16181d;
+    --border:#1e2026; --border2:#272a31;
+    --txt:#e6e7eb; --txt2:#9aa0a8; --txt3:#6b7078; --txt4:#3a3d42;
+    --acc:#6e8ef5; --acc2:#8aa0f7; --acc-soft:rgba(110,142,245,.08);
+    --ok:#7ec89c; --warn:#dcb366; --pink:#e08294; --teal:#6fc8d8;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:'Inter',system-ui,sans-serif;line-height:1.85;font-size:15.5px;-webkit-font-smoothing:antialiased}
+  #nav{position:fixed;top:0;left:0;width:240px;height:100vh;overflow-y:auto;background:var(--bg);border-right:1px solid var(--border);padding:24px 0;z-index:20}
+  #nav .brand{padding:0 20px 18px;font-weight:700;font-size:14px;color:var(--txt);border-bottom:1px solid var(--border);margin-bottom:14px}
+  #nav .brand .s{display:block;font-size:11px;color:var(--txt3);font-weight:400;margin-top:2px}
+  #nav .grp{padding:0 20px;color:var(--txt4);font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin:16px 0 6px;font-weight:600}
+  #nav a{display:block;padding:5px 20px;color:var(--txt2);font-size:13px;cursor:pointer;text-decoration:none;transition:color .15s}
+  #nav a:hover{color:var(--txt)}
+  #nav a.active{color:var(--acc)}
+  #progwrap{position:fixed;top:0;left:240px;right:0;height:2px;background:var(--border);z-index:30}
+  #prog{height:100%;background:var(--acc);width:0;transition:width .15s}
+  main{margin-left:240px;max-width:780px;padding:64px 56px 160px}
+  .cover{padding-bottom:32px;border-bottom:1px solid var(--border);margin-bottom:40px}
+  .cover .eyebrow{font-size:12px;color:var(--acc);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+  .cover h1{font-size:36px;font-weight:800;color:var(--txt);margin:10px 0 14px;line-height:1.2;letter-spacing:-0.02em}
+  .cover .lead{font-size:16px;color:var(--txt2);max-width:620px;line-height:1.7}
+  .meta{display:flex;gap:24px;margin-top:24px;flex-wrap:wrap}
+  .meta .m{font-size:12px;color:var(--txt3)}
+  .meta .m b{color:var(--txt2);font-weight:600}
+  h2{font-size:21px;font-weight:700;color:var(--txt);margin-top:56px;letter-spacing:-0.01em}
+  h2 .n{color:var(--txt4);font-weight:500;margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:16px;font-weight:600;color:var(--txt);margin-top:32px}
+  p{margin:16px 0}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:22px 26px;margin:20px 0}
+  .tag{display:block;font-size:10.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}
+  .card.def .tag{color:var(--acc)}
+  .card.thm .tag{color:var(--warn)}
+  .card.eg .tag{color:var(--ok)}
+  .card.tip .tag{color:var(--pink)}
+  .note{background:var(--surface2);border-radius:6px;padding:14px 18px;margin:18px 0;font-size:14.5px;color:var(--txt2)}
+  .note b{color:var(--txt)}
+  .step{padding:10px 0 10px 20px;margin:8px 0;border-left:2px solid var(--border2);font-size:14.5px}
+  .step .sn{display:inline-block;color:var(--txt4);font-weight:600;width:24px;margin-left:-20px;margin-right:8px;font-variant-numeric:tabular-nums}
+  .step b{color:var(--acc2)}
+  .viz{margin:28px 0}
+  .viz .vt{font-size:12px;color:var(--txt3);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+  .viz h4{font-size:15px;font-weight:600;color:var(--txt);margin:0 0 8px}
+  canvas{display:block;background:#0c0d11;border:1px solid var(--border);border-radius:6px;margin:14px 0;max-width:100%}
+  .ctrl{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin:10px 0;font-size:13px;color:var(--txt2)}
+  .ctrl input[type=range]{accent-color:var(--acc);height:4px}
+  .ctrl .val{color:var(--txt);font-family:'Inter',monospace;font-weight:600;font-size:13px}
+  .ctrl select{background:var(--surface2);color:var(--txt);border:1px solid var(--border2);border-radius:4px;padding:3px 8px;font-size:13px}
+  .ka{display:block;text-align:center;margin:18px 0;overflow-x:auto;padding:6px 0;font-size:16px}
+  table{border-collapse:collapse;margin:16px 0;width:100%;font-size:13.5px}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:center}
+  th{background:var(--surface2);color:var(--txt);font-weight:600}
+  .quiz{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:18px 24px;margin:16px 0}
+  .quiz q{display:block;font-weight:600;color:var(--txt);margin-bottom:8px;font-size:15px}
+  details{margin:6px 0}
+  summary{cursor:pointer;color:var(--acc);font-size:13px;padding:4px 0;font-weight:500}
+  summary:hover{color:var(--acc2)}
+  .ans{background:var(--surface2);border-radius:6px;padding:14px 18px;margin-top:8px;font-size:14px;color:var(--txt2)}
+  .ans b{color:var(--txt)}
+  .pill{display:inline-block;background:var(--acc-soft);color:var(--acc);padding:1px 9px;border-radius:4px;font-size:11.5px;font-weight:600;margin-right:8px}
+  .summary{background:var(--surface2);border-radius:8px;padding:24px 30px;margin:36px 0 0}
+  .summary .st{font-size:11px;color:var(--txt3);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+  @media(max-width:900px){#nav{display:none}#progwrap{left:0}main{margin-left:0;padding:40px 24px}}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="brand">可视化数学<span class="s">高等数学 · 自学教材</span></div>
+  <div class="grp">本章</div>
+  <a class="active">封面</a>
+  <a onclick="go('intro')">瞬时速度引入</a>
+  <a onclick="go('def')">导数的定义</a>
+  <a onclick="go('geo')">几何意义·切线</a>
+  <a onclick="go('lr')">左导数右导数</a>
+  <a onclick="go('cont')">可导与连续</a>
+  <a onclick="go('rule')">求导四则法则</a>
+  <a onclick="go('inv')">反函数求导</a>
+  <a onclick="go('chain')">链式法则</a>
+  <a onclick="go('tab')">求导公式表</a>
+  <a onclick="go('high')">高阶导数</a>
+  <a onclick="go('imp')">隐函数与参数方程</a>
+  <a onclick="go('diff')">微分</a>
+  <a onclick="go('eg')">例题精讲</a>
+  <a onclick="go('quiz')">练习</a>
+  <div class="grp">后续</div>
+  <a style="color:var(--txt4)">中值定理</a>
+  <a style="color:var(--txt4)">洛必达法则</a>
+  <a style="color:var(--txt4)">泰勒公式</a>
+  <a style="color:var(--txt4)">导数应用</a>
+</nav>
+<div id="progwrap"><div id="prog"></div></div>
+
+<main>
+
+<div class="cover">
+  <div class="eyebrow">高等数学 · 第二章</div>
+  <h1>导数与微分</h1>
+  <p class="lead">微积分的心脏。从瞬时速度出发,把导数定义嚼透,练熟四则、链式、隐函数、参数方程与高阶导数,再落地到微分与近似计算。学完它,中值定理只是换套招式。</p>
+  <div class="meta">
+    <div class="m"><b>约 75 分钟</b></div>
+    <div class="m"><b>12 例题 · 8 练习</b></div>
+    <div class="m"><b>4 个交互演示</b></div>
+  </div>
+</div>
+
+<h2 id="intro"><span class="n">01</span>从瞬时速度说起</h2>
+<p>你开车从 A 到 B,总路程 120 km,用了 2 小时,平均速度 60 km/h。但仪表盘上的指针每秒都在跳--它显示的不是平均值,而是<b>这一瞬的速度</b>。怎么算"某一瞬的速度"?这是导数的第一个源头。</p>
+
+<div class="card tip"><span class="tag">物理原型</span>
+<p><b>自由落体</b>。物体下落距离 $s=\frac12 gt^2$($g\approx9.8$)。求第 $t_0$ 秒那一瞬的速度。</p>
+<p>取 $t_0$ 附近一段时间 $\Delta t$,这段时间走的位移 $\Delta s=s(t_0+\Delta t)-s(t_0)$,平均速度</p>
+<p class="ka">$$\bar v=\frac{\Delta s}{\Delta t}=\frac{\frac12 g(t_0+\Delta t)^2-\frac12 gt_0^2}{\Delta t}=\frac{g(2t_0\,\Delta t+(\Delta t)^2)/2}{\Delta t}=\frac12 g(2t_0+\Delta t)$$</p>
+<p>$\Delta t$ 取得越短,$\bar v$ 越接近 $gt_0$。让 $\Delta t\to0$,得<b>瞬时速度</b>$v=gt_0$。这个"差商的极限"就是导数。</p></div>
+
+<div class="note"><b>一句话</b>:导数 = <b>变化率</b> = 因变量增量与自变量增量之比,在增量趋于 0 时的极限。瞬时速度、切线斜率、密度、电流、边际成本……背后都是同一个数学结构。</p></div>
+
+<h2 id="def"><span class="n">02</span>导数的定义</h2>
+<div class="card def"><span class="tag">定义 · 导数</span>
+<p>设函数 $y=f(x)$ 在点 $x_0$ 的某邻域内有定义。当自变量有增量 $\Delta x$(从 $x_0$ 变到 $x_0+\Delta x$)时,函数增量</p>
+<p class="ka">$$\Delta y=f(x_0+\Delta x)-f(x_0)$$</p>
+<p>若<b>极限</b></p>
+<p class="ka">$$\lim_{\Delta x\to 0}\frac{\Delta y}{\Delta x}=\lim_{\Delta x\to 0}\frac{f(x_0+\Delta x)-f(x_0)}{\Delta x}$$</p>
+<p>存在,则称 $f$ 在 $x_0$ <b>可导</b>,此极限值称为 $f$ 在 $x_0$ 的<b>导数</b>,记作</p>
+<p class="ka">$$f'(x_0),\quad y'\big|_{x=x_0},\quad \left.\frac{dy}{dx}\right|_{x=x_0},\quad \left.\frac{df}{dx}\right|_{x=x_0}$$</p></div>
+
+<div class="card tip"><span class="tag">等价写法</span>
+<p>令 $x=x_0+\Delta x$,则 $\Delta x=x-x_0$,定义可改写为(更常用)</p>
+<p class="ka">$$f'(x_0)=\lim_{x\to x_0}\frac{f(x)-f(x_0)}{x-x_0}$$</p>
+<p>这两个形式完全等价,做题时按方便选用。</p></div>
+
+<h3>导函数</h3>
+<p>若 $f$ 在区间 $I$ 上每点都可导,则对每个 $x\in I$ 都对应一个导数值 $f'(x)$,这就定义了一个新函数 $f'(x)$,称为 $f$ 的<b>导函数</b>(简称导数)。求导,就是从 $f$ 加工出 $f'$。</p>
+
+<div class="note"><b>逐符号拆</b>:① $\Delta x$--自变量增量,可正可负;② $\Delta y=f(x_0+\Delta x)-f(x_0)$--对应的函数增量;③ $\frac{\Delta y}{\Delta x}$--差商,即<b>平均变化率</b>;④ $\Delta x\to0$--让间隔无限缩小;⑤ 极限存在--平均变化率"稳定"到一个值,这个值就是<b>瞬时变化率</b>。</div>
+
+<h2 id="geo"><span class="n">03</span>几何意义·切线斜率</h2>
+<p>把 $f$ 画成曲线。在曲线上取定点 $P(x_0,f(x_0))$,再取邻近点 $Q(x_0+\Delta x,f(x_0+\Delta x))$。直线 $PQ$ 叫<b>割线</b>,它的斜率正是差商:</p>
+<p class="ka">$$k_{PQ}=\frac{f(x_0+\Delta x)-f(x_0)}{\Delta x}$$</p>
+<p>让 $\Delta x\to0$,$Q$ 沿曲线滑向 $P$,割线绕 $P$ 转动,其<b>极限位置</b>就是曲线在 $P$ 处的<b>切线</b>。所以</p>
+<p class="ka">$$f'(x_0)=\text{切线斜率 }k_{\text{切}}$$</p>
+
+<div class="card def"><span class="tag">切线与法线方程</span>
+<p>曲线 $y=f(x)$ 在点 $P(x_0,y_0)$(其中 $y_0=f(x_0)$)处的<b>切线</b>方程:</p>
+<p class="ka">$$y-y_0=f'(x_0)(x-x_0)$$</p>
+<p>当 $f'(x_0)\neq0$ 时,<b>法线</b>方程(法线 = 过 $P$ 且垂直于切线的直线):</p>
+<p class="ka">$$y-y_0=-\frac{1}{f'(x_0)}(x-x_0)$$</p>
+<p>若 $f'(x_0)=0$,切线水平 $y=y_0$,法线竖直 $x=x_0$。</p></div>
+
+<div class="viz">
+<div class="vt">交互演示 · 割线极限成切线</div>
+<h4>拖 h 趋近 0,看割线 PQ 如何变成切线</h4>
+<p>蓝曲线 $y=0.3x^2$。绿割线连 $P(x_0=2,f(x_0))$ 与 $Q(x_0+h,f(x_0+h))$;橙虚线是切线(斜率 $=f'(x_0)$)。$h$ 越小,绿割线越贴橙切线,斜率越靠拢。</p>
+<canvas id="cv1" width="780" height="240"></canvas>
+<div class="ctrl">
+  <label>h = <span class="val" id="v1">2.00</span></label>
+  <input type="range" id="s1" min="1" max="50" value="20" style="width:280px">
+  <span class="val" id="v1b" style="color:var(--ok)">割线斜率=1.800 切线斜率=1.200</span>
+</div>
+<div class="note">把 $h$ 拖到 0.1,绿割线几乎与橙切线重合,割线斜率 $\to$ 切线斜率。这就是"导数=割线斜率的极限"的几何写照。</div>
+</div>
+
+<h2 id="lr"><span class="n">04</span>左导数与右导数</h2>
+<p>导数定义里的极限是双侧的。仿照左右极限,把差商的左、右极限单列出来。</p>
+<div class="card def"><span class="tag">定义 · 单侧导数</span>
+<p>函数 $f$ 在 $x_0$ 的<b>左导数</b>、<b>右导数</b>分别定义为</p>
+<p class="ka">$$f'_-(x_0)=\lim_{\Delta x\to 0^-}\frac{f(x_0+\Delta x)-f(x_0)}{\Delta x},\quad f'_+(x_0)=\lim_{\Delta x\to 0^+}\frac{f(x_0+\Delta x)-f(x_0)}{\Delta x}$$</p></div>
+
+<div class="card thm"><span class="tag">定理</span>
+<p>$f$ 在 $x_0$ 可导 $\iff$ 左导数 $f'_-(x_0)$ 与右导数 $f'_+(x_0)$ 都存在且<b>相等</b>,此时</p>
+<p class="ka">$$f'(x_0)=f'_-(x_0)=f'_+(x_0)$$</p>
+<p><b>适用条件</b>:分段函数在分段点、含绝对值的函数在零点、闭区间端点处,必须用单侧导数判断。</p></div>
+
+<div class="card tip"><span class="tag">分段点求导口诀</span>
+<p>① 先确认 $x_0$ 处函数连续(不连续则必不可导);② 分别算左、右导数;③ 比较二者,相等则可导,不等或其一不存在则不可导。<b>左右导数都要老老实实用定义算</b>,不能拿分段公式直接代。</p></div>
+
+<h2 id="cont"><span class="n">05</span>可导与连续的关系</h2>
+<div class="card thm"><span class="tag">定理 · 可导必连续</span>
+<p>若 $f$ 在 $x_0$ 可导,则 $f$ 在 $x_0$ 连续。</p>
+<div class="step"><span class="sn">证</span>可导意味着 $f'(x_0)=\lim\limits_{x\to x_0}\frac{f(x)-f(x_0)}{x-x_0}$ 存在。</div>
+<div class="step"><span class="sn">02</span>把 $f(x)-f(x_0)$ 拆成差商乘以 $(x-x_0)$:</div>
+<p class="ka">$$f(x)-f(x_0)=\frac{f(x)-f(x_0)}{x-x_0}\cdot(x-x_0)$$</p>
+<div class="step"><span class="sn">03</span>取极限(差商极限存在 $\times$ 趋于 0 的量):</div>
+<p class="ka">$$\lim_{x\to x_0}[f(x)-f(x_0)]=f'(x_0)\cdot 0=0$$</p>
+<div class="step"><span class="sn">04</span>即 $\lim\limits_{x\to x_0}f(x)=f(x_0)$,故 $f$ 在 $x_0$ 连续。$\blacksquare$</div></div>
+
+<div class="card thm"><span class="tag">连续不一定可导(反例)</span>
+<p>$f(x)=|x|$ 在 $x=0$ 处连续($\lim\limits_{x\to0}|x|=0=|0|$),但<b>不可导</b>。用单侧导数验:</p>
+<div class="step"><span class="sn">01</span>右导数:$\Delta x\to0^+$,$|\Delta x|=\Delta x$,$\dfrac{|0+\Delta x|-|0|}{\Delta x}=\dfrac{\Delta x}{\Delta x}=1$,$f'_+(0)=1$。</div>
+<div class="step"><span class="sn">02</span>左导数:$\Delta x\to0^-$,$|\Delta x|=-\Delta x$,$\dfrac{|0+\Delta x|-|0|}{\Delta x}=\dfrac{-\Delta x}{\Delta x}=-1$,$f'_-(0)=-1$。</div>
+<div class="step"><span class="sn">03</span>$f'_-(0)=-1\neq 1=f'_+(0)$,故 $|x|$ 在 $0$ 不可导。$\blacksquare$</div>
+<p>几何上,$|x|$ 在原点是个<b>"尖角"</b>(corner),左半段斜率 $-1$、右半段斜率 $+1$,拼不出一条切线。</p></div>
+
+<div class="note"><b>逻辑链</b>:可导 $\Rightarrow$ 连续(真);连续 $\Rightarrow$ 可导(假);不连续 $\Rightarrow$ 不可导(真,逆否命题);不可导 $\Rightarrow$ 不连续(假)。判可导前先验连续是快速排雷。</div>
+
+<div class="viz">
+<div class="vt">交互演示 · 尖角处不可导</div>
+<h4>切换函数,拖 $x_0$,看切线是否存在</h4>
+<p>左 $|x|$ 在 $x_0=0$ 处是尖角:左半切线斜率 $-1$(粉)、右半切线斜率 $+1$(青),左右不等 $\Rightarrow$ 不可导。$x_0\neq0$ 处单侧切线存在。右切到 $y=0.4x^2$,处处光滑可导,任意点都有唯一切线(橙虚)。</p>
+<canvas id="cv2" width="780" height="220"></canvas>
+<div class="ctrl">
+  <label>函数 <select id="sel2">
+    <option value="|x|">|x|(尖角)</option>
+    <option value="x²">0.4x²(光滑)</option>
+  </select></label>
+  <label>x_0 = <span class="val" id="v2">0.00</span></label>
+  <input type="range" id="s2" min="0" max="60" value="30" style="width:280px">
+  <span class="val" id="v2b" style="color:var(--warn)">左导数≠右导数,不可导(但连续)</span>
+</div>
+</div>
+
+<h2 id="rule"><span class="n">06</span>求导四则法则</h2>
+<p>用定义逐个求导太慢。下面四条法则把"复杂函数"拆成"基本初等函数"的组合,是求导的主干工具。</p>
+<div class="card thm"><span class="tag">四则求导法则</span>
+<p>设 $u=u(x),v=v(x)$ 都可导,$C$ 为常数:</p>
+<p class="ka">$$\begin{aligned}&(u\pm v)'=u'\pm v'\\[2pt]&(Cu)'=Cu'\\[2pt]&(uv)'=u'v+uv'\\[2pt]&\left(\dfrac{u}{v}\right)'=\dfrac{u'v-uv'}{v^2}\quad(v\neq0)\end{aligned}$$</p></div>
+
+<div class="card tip"><span class="tag">乘法法则的证明(示范用定义)</span>
+<p>证 $(uv)'=u'v+uv'$:</p>
+<div class="step"><span class="sn">01</span>按定义写差商:$\dfrac{(u(x+\Delta x)v(x+\Delta x))-(u(x)v(x))}{\Delta x}$。</div>
+<div class="step"><span class="sn">02</span>用 $\pm u(x+\Delta x)v(x)$ 拆项(加零法):</div>
+<p class="ka">$$=\frac{u(x+\Delta x)[v(x+\Delta x)-v(x)]+[u(x+\Delta x)-u(x)]v(x)}{\Delta x}$$</p>
+<div class="step"><span class="sn">03</span>$=u(x+\Delta x)\cdot\dfrac{\Delta v}{\Delta x}+\dfrac{\Delta u}{\Delta x}\cdot v(x)$。</div>
+<div class="step"><span class="sn">04</span>$\Delta x\to0$:$u(x+\Delta x)\to u(x)$(连续),$\dfrac{\Delta v}{\Delta x}\to v'$,$\dfrac{\Delta u}{\Delta x}\to u'$。得 $u'v+uv'$。$\blacksquare$</div>
+<p>商法则可由 $(u/v)=u\cdot v^{-1}$ 配合链式法则推出,或直接用定义仿上。</p></div>
+
+<h2 id="inv"><span class="n">07</span>反函数求导</h2>
+<div class="card thm"><span class="tag">定理 · 反函数求导</span>
+<p>设 $x=\varphi(y)$ 在 $y$ 的某邻域内<b>单调</b>、可导,且 $\varphi'(y)\neq0$。则其反函数 $y=f(x)$ 在对应 $x$ 处可导,且</p>
+<p class="ka">$$f'(x)=\frac{1}{\varphi'(y)}=\frac{1}{\varphi'(f(x))},\qquad\text{即}\quad \frac{dy}{dx}=\frac{1}{\dfrac{dx}{dy}}$$</p>
+<p><b>适用条件</b>:① 原函数单调(保证反函数存在);② 处处可导且导数非零(否则反函数在该点切线竖直、导数为 $\infty$)。</p></div>
+
+<div class="card tip"><span class="tag">直观解释</span>
+<p>$\dfrac{dy}{dx}$ 与 $\dfrac{dx}{dy}$ 互为倒数。原函数图像上一点切线斜率 $k=\varphi'(y)$;反函数图像是该图关于 $y=x$ 的镜像,镜像后切线斜率变成 $\dfrac{1}{k}$(只要 $k\neq0$)。</p></div>
+
+<h2 id="chain"><span class="n">08</span>复合函数求导·链式法则(重点)</h2>
+<p>这是本章<b>最核心、最常考</b>的法则。绝大多数实际函数都是复合的,链式法则是拆解它们的钥匙。</p>
+<div class="card thm"><span class="tag">定理 · 链式法则</span>
+<p>设 $y=f(u)$ 在 $u$ 可导,$u=g(x)$ 在 $x$ 可导,则复合函数 $y=f(g(x))$ 在 $x$ 可导,且</p>
+<p class="ka">$$\frac{dy}{dx}=\frac{dy}{du}\cdot\frac{du}{dx}=f'(u)\cdot g'(x)$$</p>
+<p>即"<b>外层导 × 内层导</b>"。多层复合就多套几层。</p></div>
+
+<div class="card tip"><span class="tag">直观解释</span>
+<p>$\Delta y=f(u+\Delta u)-f(u)\approx f'(u)\Delta u$,$\Delta u=g(x+\Delta x)-g(x)\approx g'(x)\Delta x$。两步变化率相乘,总变化率 $\dfrac{\Delta y}{\Delta x}\approx f'(u)g'(x)\Delta x/\Delta x$,取极限即得链式法则。<b>"变化率相乘"是它的物理直觉</b>。</p></div>
+
+<div class="card tip"><span class="tag">操作口诀·由外向内</span>
+<p>把复合函数看成<b>洋葱</b>,一层层剥:最外层是 $f(\cdot)$,剥掉一层后里面是 $g(\cdot)$,再剥是 $h(\cdot)$……每剥一层乘上该层的导数,直到剥到最里的自变量 $x$。</p>
+<p class="ka">$$y=f(g(h(x)))\ \Rightarrow\ \frac{dy}{dx}=f'(g(h(x)))\cdot g'(h(x))\cdot h'(x)$$</p>
+<p>关键是<b>内层保持原样不动</b>,只对最外层结构求导,剩下的留给下一步。</p></div>
+
+<h2 id="tab"><span class="n">09</span>基本初等函数求导公式表</h2>
+<p>这些是求导的"原子",所有复杂函数都靠它们 + 四则 + 链式组装。<b>必须背熟</b>。</p>
+<div class="card"><span class="tag" style="color:var(--acc)">基本求导公式</span>
+<table>
+<tr><th>函数 $f(x)$</th><th>导数 $f'(x)$</th><th>函数 $f(x)$</th><th>导数 $f'(x)$</th></tr>
+<tr><td>$C$(常数)</td><td>$0$</td><td>$x^\mu$</td><td>$\mu x^{\mu-1}$</td></tr>
+<tr><td>$a^x$</td><td>$a^x\ln a$</td><td>$e^x$</td><td>$e^x$</td></tr>
+<tr><td>$\log_a x$</td><td>$\dfrac{1}{x\ln a}$</td><td>$\ln x$</td><td>$\dfrac{1}{x}$</td></tr>
+<tr><td>$\sin x$</td><td>$\cos x$</td><td>$\cos x$</td><td>$-\sin x$</td></tr>
+<tr><td>$\tan x$</td><td>$\sec^2 x$</td><td>$\cot x$</td><td>$-\csc^2 x$</td></tr>
+<tr><td>$\sec x$</td><td>$\sec x\tan x$</td><td>$\csc x$</td><td>$-\csc x\cot x$</td></tr>
+<tr><td>$\arcsin x$</td><td>$\dfrac{1}{\sqrt{1-x^2}}$</td><td>$\arccos x$</td><td>$-\dfrac{1}{\sqrt{1-x^2}}$</td></tr>
+<tr><td>$\arctan x$</td><td>$\dfrac{1}{1+x^2}$</td><td>$\operatorname{arccot}x$</td><td>$-\dfrac{1}{1+x^2}$</td></tr>
+</table></div>
+
+<div class="note"><b>记忆小抄</b>:三角函数 $\sin\to\cos$、$\tan\to\sec^2$、$\sec\to\sec\tan$ 都带"正号";余函数(cot、csc、cos、arccos、arccot)的导数都带"负号"。反三角的分母:arcsin/arccos 是 $\sqrt{1-x^2}$,arctan/arccot 是 $1+x^2$。</div>
+
+<div class="viz">
+<div class="vt">交互演示 · 函数与导函数图对照</div>
+<h4>拖 x,左图看切线斜率,右图读导数值</h4>
+<p>上半图:原函数 $f$(蓝)与切线(橙虚),切线斜率就是 $f'(x)$。下半图:导函数 $f'$(粉)。竖虚线把同一 $x$ 连起来--<b>切线越陡,导函数值越高</b>;切线水平处 $f'=0$(极值点)。</p>
+<canvas id="cv3" width="780" height="300"></canvas>
+<div class="ctrl">
+  <label>函数 <select id="sel3">
+    <option value="x²">x²</option>
+    <option value="sin x">sin x</option>
+    <option value="e^x">e^x</option>
+    <option value="ln x">ln x</option>
+  </select></label>
+  <label>x = <span class="val" id="v3">0.00</span></label>
+  <input type="range" id="s3" min="0" max="100" value="50" style="width:280px">
+  <span class="val" id="v3b" style="color:var(--pink)">f'=0.000</span>
+</div>
+<div class="note">把 $x$ 拖到 $x^2$ 的顶点 $x=0$:切线水平(橙虚变平),导函数图上对应点正好落在 $0$--这就是"<b>$f'(x_0)=0$ 是极值点的必要条件</b>"的伏笔。</div>
+</div>
+
+<h2 id="high"><span class="n">10</span>高阶导数与莱布尼茨公式</h2>
+<p>对 $f$ 求一次导得 $f'$;对 $f'$ 再求导得 $f''$,叫<b>二阶导数</b>。如此反复:</p>
+<p class="ka">$$y''=(y')',\quad y'''=(y'')',\quad\ldots,\quad y^{(n)}=(y^{(n-1)})'$$</p>
+<p>$y^{(n)}$ 称 $y$ 的 <b>$n$ 阶导数</b>。瞬时速度的导数是加速度,加速度的导数是"加加速度",都是高阶导数。</p>
+
+<div class="card"><span class="tag" style="color:var(--acc)">常见高阶导数</span>
+<table>
+<tr><th>函数</th><th>$n$ 阶导数</th></tr>
+<tr><td>$e^x$</td><td>$e^x$</td></tr>
+<tr><td>$\sin x$</td><td>$\sin\!\left(x+\dfrac{n\pi}{2}\right)$</td></tr>
+<tr><td>$\cos x$</td><td>$\cos\!\left(x+\dfrac{n\pi}{2}\right)$</td></tr>
+<tr><td>$\ln x$</td><td>$(-1)^{n-1}\dfrac{(n-1)!}{x^n}$</td></tr>
+<tr><td>$x^\mu$</td><td>$\mu(\mu-1)\cdots(\mu-n+1)\,x^{\mu-n}$</td></tr>
+<tr><td>$\dfrac{1}{x}$</td><td>$(-1)^n\dfrac{n!}{x^{n+1}}$</td></tr>
+</table>
+<p><b>记忆</b>:$\sin/\cos$ 每求导一次相当于自变量 $+\dfrac{\pi}{2}$;指数 $e^x$ 最稳定,几阶导都是自己。</p></div>
+
+<div class="card thm"><span class="tag">定理 · 莱布尼茨公式</span>
+<p>设 $u(x),v(x)$ 都有 $n$ 阶导数,则</p>
+<p class="ka">$$(uv)^{(n)}=\sum_{k=0}^{n}\binom{n}{k}u^{(k)}v^{(n-k)},\qquad \binom{n}{k}=\frac{n!}{k!(n-k)!}$$</p>
+<p>结构与<b>二项式定理</b> $(a+b)^n=\sum\binom{n}{k}a^k b^{n-k}$ 几乎一样,把"幂"换成"导数阶数"即可。</p>
+<p><b>适用条件</b>:两函数都要有 $n$ 阶导数。实用技巧:挑一个高阶导会"归零"的(如多项式,3 阶以上为 0),求和会自动截断,只剩前几项。</p></div>
+
+<h2 id="imp"><span class="n">11</span>隐函数与参数方程求导</h2>
+<h3>隐函数求导</h3>
+<p>有些函数关系藏在方程 $F(x,y)=0$ 里(如 $x^2+y^2=R^2$),没法写成显式 $y=f(x)$。求 $\dfrac{dy}{dx}$ 的套路:</p>
+<div class="card"><span class="tag" style="color:var(--acc)">三步法</span>
+<div class="step"><span class="sn">01</span>方程两边对 $x$ 求导,把 $y$ 视为 $x$ 的函数(遇到 $y$ 的式子,用链式法则:先对 $y$ 求导,再乘 $y'$)。</div>
+<div class="step"><span class="sn">02</span>把含 $y'$ 的项集中到一边,其余移到另一边。</div>
+<div class="step"><span class="sn">03</span>解出 $y'$,通常用 $x,y$ 表示。</div></div>
+
+<h3>参数方程确定的函数求导</h3>
+<p>若 $x,y$ 都是参数 $t$ 的函数:$\begin{cases}x=\varphi(t)\\y=\psi(t)\end{cases}$,$\varphi,\psi$ 可导且 $\varphi'(t)\neq0$,则</p>
+<p class="ka">$$\frac{dy}{dx}=\frac{\psi'(t)}{\varphi'(t)}=\frac{dy/dt}{dx/dt}$$</p>
+<p>二阶导数要小心:$y''=\dfrac{d}{dx}\!\left(\dfrac{dy}{dx}\right)=\dfrac{\dfrac{d}{dt}\!\left(\dfrac{dy}{dx}\right)}{\dfrac{dx}{dt}}$,分子要对 $t$ 再求导,分母还是 $\varphi'(t)$。</p>
+
+<h2 id="diff"><span class="n">12</span>微分</h2>
+<div class="card def"><span class="tag">定义 · 微分</span>
+<p>设 $y=f(x)$ 在 $x$ 可导。称自变量增量 $\Delta x$ 的<b>线性主部</b>为微分,记 $dx$,且对自变量有 $dx=\Delta x$。函数微分</p>
+<p class="ka">$$dy=f'(x)\,dx=f'(x)\,\Delta x$$</p>
+<p>它满足:函数增量 $\Delta y=f(x+\Delta x)-f(x)$ 可分解为</p>
+<p class="ka">$$\Delta y=f'(x)\,\Delta x+o(\Delta x)=dy+o(\Delta x)$$</p>
+<p>即 $\Delta y\approx dy$($\Delta x$ 很小时),误差是高阶无穷小 $o(\Delta x)$。</p></div>
+
+<div class="card def"><span class="tag">几何意义</span>
+<p>$\Delta y$ 是<b>曲线</b>纵坐标的增量,$dy$ 是<b>切线</b>纵坐标的增量。在 $x_0$ 附近用切线(直线)代替曲线--这就是"<b>以直代曲</b>",微积分的核心思想。</p></div>
+
+<div class="card"><span class="tag" style="color:var(--acc)">微分基本公式与法则</span>
+<p>由于 $dy=f'(x)dx$,求微分就是把求导公式每条右端乘 $dx$。四则微分法则:</p>
+<p class="ka">$$d(u\pm v)=du\pm dv,\quad d(uv)=v\,du+u\,dv,\quad d\!\left(\frac{u}{v}\right)=\frac{v\,du-u\,dv}{v^2}$$</p></div>
+
+<div class="card thm"><span class="tag">一阶微分形式不变性</span>
+<p>无论 $u$ 是<b>自变量</b>还是<b>中间变量</b>($u=g(x)$),函数 $y=f(u)$ 的微分都写作</p>
+<p class="ka">$$dy=f'(u)\,du$$</p>
+<div class="step"><span class="sn">证</span>$u$ 是自变量时,$du=\Delta u$,$dy=f'(u)du$。</div>
+<div class="step"><span class="sn">02</span>$u=g(x)$ 是中间变量时,$y=f(g(x))$。由链式法则 $\dfrac{dy}{dx}=f'(u)g'(x)$,故</div>
+<p class="ka">$$dy=f'(u)g'(x)\,dx=f'(u)\,du\quad(\text{因 }du=g'(x)dx)$$</p>
+<div class="step"><span class="sn">03</span>形式完全一样。$\blacksquare$</div>
+<p>意义:求微分时不必关心 $u$ 是不是自变量,直接套 $dy=f'(u)du$,这让链式法则在"微分记号"下显得自然。</p></div>
+
+<div class="card def"><span class="tag">近似计算应用</span>
+<p>$\Delta y\approx dy$ 翻译成函数值近似(取 $x_0$ 附近 $x_0+\Delta x$):</p>
+<p class="ka">$$f(x_0+\Delta x)\approx f(x_0)+f'(x_0)\,\Delta x$$</p>
+<p>取 $x_0=0$,得到常用近似($|x|$ 很小):</p>
+<p class="ka">$$(1+x)^\alpha\approx1+\alpha x,\quad \sin x\approx x,\quad \tan x\approx x,\quad e^x\approx1+x,\quad \ln(1+x)\approx x$$</p></div>
+
+<div class="viz">
+<div class="vt">交互演示 · Δy 与 dy 的几何差</div>
+<h4>拖 Δx,看曲线增量与切线增量如何分叉</h4>
+<p>蓝曲线 $y=0.3x^2$,$x_0=2$。绿段 $\Delta y=f(x_0+\Delta x)-f(x_0)$ 是<b>曲线</b>纵坐标增量;粉段 $dy=f'(x_0)\Delta x$ 是<b>切线</b>纵坐标增量。$\Delta x$ 小时两者几乎重合;$\Delta x$ 大时绿比粉高出一截,这"多出来"就是 $o(\Delta x)$。</p>
+<canvas id="cv4" width="780" height="240"></canvas>
+<div class="ctrl">
+  <label>Δx = <span class="val" id="v4">1.50</span></label>
+  <input type="range" id="s4" min="1" max="30" value="15" style="width:280px">
+  <span class="val" id="v4b" style="color:var(--ok)">Δy=2.475 dy=1.800 误差=0.675</span>
+</div>
+<div class="note">$\Delta x\to0$ 时 $\Delta y-dy=o(\Delta x)\to0$,且趋于 0 的速度比 $\Delta x$ 还快--这正是"以直代曲"误差可控的依据。</div>
+</div>
+
+<h2 id="eg"><span class="n">13</span>例题精讲(12 道,由易到难)</h2>
+
+<div class="card eg"><span class="tag">例 1 · 基础用定义求导</span>
+<p>用定义求 $f(x)=x^2$ 的导数。</p>
+<div class="step"><span class="sn">01</span>写差商:$\dfrac{f(x+\Delta x)-f(x)}{\Delta x}=\dfrac{(x+\Delta x)^2-x^2}{\Delta x}$。</div>
+<div class="step"><span class="sn">02</span>展开:$=\dfrac{x^2+2x\Delta x+(\Delta x)^2-x^2}{\Delta x}=\dfrac{2x\Delta x+(\Delta x)^2}{\Delta x}=2x+\Delta x$。</div>
+<div class="step"><span class="sn">03</span>取极限 $\Delta x\to0$:得 $f'(x)=2x$。$\blacksquare$</div>
+<div class="note">定义法求导的固定三步:写差商 $\to$ 化简 $\to$ 取极限。多项式型可直接约掉 $\Delta x$。</div></div>
+
+<div class="card eg"><span class="tag">例 2 · 四则·多项式</span>
+<p>求 $y=x^3+2x^2-5x+7$ 的导数。</p>
+<div class="step"><span class="sn">01</span>用和差法则拆开:$(x^3)'+(2x^2)'-(5x)'+(7)'$。</div>
+<div class="step"><span class="sn">02</span>逐项:$(x^3)'=3x^2$;$(2x^2)'=2\cdot2x=4x$;$(5x)'=5$;$(7)'=0$。</div>
+<div class="step"><span class="sn">03</span>合并:$y'=3x^2+4x-5$。$\blacksquare$</div></div>
+
+<div class="card eg"><span class="tag">例 3 · 商法则</span>
+<p>求 $y=\dfrac{x^2+1}{x-1}$ 的导数。</p>
+<div class="step"><span class="sn">01</span>令 $u=x^2+1$,$v=x-1$。则 $u'=2x$,$v'=1$。</div>
+<div class="step"><span class="sn">02</span>商法则 $y'=\dfrac{u'v-uv'}{v^2}=\dfrac{2x(x-1)-(x^2+1)\cdot1}{(x-1)^2}$。</div>
+<div class="step"><span class="sn">03</span>分子化简:$2x^2-2x-x^2-1=x^2-2x-1$。</div>
+<div class="step"><span class="sn">04</span>$y'=\dfrac{x^2-2x-1}{(x-1)^2}$。$\blacksquare$</div></div>
+
+<div class="card eg"><span class="tag">例 4 · 复合链式·两层</span>
+<p>求 $y=\sin(2x^2+1)$ 的导数。</p>
+<div class="step"><span class="sn">01</span>识别结构:外层 $y=\sin u$,内层 $u=2x^2+1$。</div>
+<div class="step"><span class="sn">02</span>外层对 $u$ 求导:$\dfrac{dy}{du}=\cos u$。</div>
+<div class="step"><span class="sn">03</span>内层对 $x$ 求导:$\dfrac{du}{dx}=4x$。</div>
+<div class="step"><span class="sn">04</span>链式相乘,并把 $u$ 代回:$y'=\cos u\cdot4x=4x\cos(2x^2+1)$。$\blacksquare$</div>
+<div class="note">易错点:只写 $\cos(2x^2+1)$ 漏掉内层导 $4x$,或把 $\cos$ 拿进括号对 $2x^2+1$ 求导(那是另一回事)。内层一定要"原样保留",只乘上它的导数。</div></div>
+
+<div class="card eg"><span class="tag">例 5 · 复合链式·多层</span>
+<p>求 $y=e^{\sin 3x}$ 的导数。</p>
+<div class="step"><span class="sn">01</span>剥洋葱:$y=e^u$,$u=\sin v$,$v=3x$。</div>
+<div class="step"><span class="sn">02</span>各层导数:$\dfrac{dy}{du}=e^u$,$\dfrac{du}{dv}=\cos v$,$\dfrac{dv}{dx}=3$。</div>
+<div class="step"><span class="sn">03</span>链式相乘:$y'=e^u\cdot\cos v\cdot 3$。</div>
+<div class="step"><span class="sn">04</span>代回最里层:$y'=3\cos 3x\cdot e^{\sin 3x}$。$\blacksquare$</div></div>
+
+<div class="card eg"><span class="tag">例 6 · 反函数求导证</span>
+<p>证明 $(\arcsin x)'=\dfrac{1}{\sqrt{1-x^2}}$($|x|<1$)。</p>
+<div class="step"><span class="sn">01</span>设 $y=\arcsin x$,则其反函数为 $x=\sin y$,值域 $y\in\left(-\dfrac{\pi}{2},\dfrac{\pi}{2}\right)$。</div>
+<div class="step"><span class="sn">02</span>由反函数求导:$y'=\dfrac{1}{(\sin y)'}=\dfrac{1}{\cos y}$。</div>
+<div class="step"><span class="sn">03</span>在此区间 $\cos y>0$,故 $\cos y=\sqrt{1-\sin^2 y}=\sqrt{1-x^2}$。</div>
+<div class="step"><span class="sn">04</span>代入:$y'=\dfrac{1}{\sqrt{1-x^2}}$。$\blacksquare$</div>
+<div class="note">条件 $|x|<1$ 保证 $1-x^2>0$;端点 $x=\pm1$ 处导数为 $\infty$(切线竖直),不可导。同理可证 $(\arctan x)'=\dfrac{1}{1+x^2}$。</div></div>
+
+<div class="card eg"><span class="tag">例 7 · 隐函数求导</span>
+<p>由方程 $x^2+y^2=R^2$ 确定 $y=y(x)$,求 $\dfrac{dy}{dx}$。</p>
+<div class="step"><span class="sn">01</span>方程两边对 $x$ 求导($y$ 视为 $x$ 的函数):$\dfrac{d}{dx}(x^2)+\dfrac{d}{dx}(y^2)=\dfrac{d}{dx}(R^2)$。</div>
+<div class="step"><span class="sn">02</span>$2x+2y\,y'=0$(注意 $y^2$ 对 $x$ 求导用链式:先 $2y$,再乘 $y'$)。</div>
+<div class="step"><span class="sn">03</span>解出 $y'$:$2y\,y'=-2x\Rightarrow y'=-\dfrac{x}{y}$($y\neq0$)。$\blacksquare$</div>
+<div class="note">结果里同时含 $x$ 和 $y$ 是正常的,隐函数求导往往如此。几何上 $-x/y$ 正是圆上一点处切线斜率。</div></div>
+
+<div class="card eg"><span class="tag">例 8 · 隐函数·定点求导</span>
+<p>设 $e^y+xy=e$ 确定 $y=y(x)$,求 $y'(0)$。</p>
+<div class="step"><span class="sn">01</span>两边对 $x$ 求导:$e^y\cdot y'+y+x\,y'=0$(乘积 $xy$ 用乘法法则:$(xy)'=y+x\,y'$)。</div>
+<div class="step"><span class="sn">02</span>整理:$y'(e^y+x)=-y$,得 $y'=-\dfrac{y}{e^y+x}$。</div>
+<div class="step"><span class="sn">03</span>需先求 $y(0)$。代 $x=0$ 入原方程:$e^{y(0)}+0=e\Rightarrow y(0)=1$。</div>
+<div class="step"><span class="sn">04</span>代 $x=0,y=1$ 入导数式:$y'(0)=-\dfrac{1}{e^1+0}=-\dfrac{1}{e}$。$\blacksquare$</div>
+<div class="note">定点求导的顺序:先求 $y(x_0)$,再代入求 $y'(x_0)$。别急着化简 $y'$ 的通式。</div></div>
+
+<div class="card eg"><span class="tag">例 9 · 参数方程求导</span>
+<p>椭圆 $\begin{cases}x=a\cos t\\y=b\sin t\end{cases}$($a,b>0$),求 $\dfrac{dy}{dx}$。</p>
+<div class="step"><span class="sn">01</span>算 $\dfrac{dx}{dt}=(a\cos t)'=-a\sin t$。</div>
+<div class="step"><span class="sn">02</span>算 $\dfrac{dy}{dt}=(b\sin t)'=b\cos t$。</div>
+<div class="step"><span class="sn">03</span>$\dfrac{dy}{dx}=\dfrac{dy/dt}{dx/dt}=\dfrac{b\cos t}{-a\sin t}=-\dfrac{b}{a}\cot t$($t\neq0,\pi$,即 $\sin t\neq0$)。$\blacksquare$</div>
+<div class="note">$t=0,\pi$ 对应椭圆左右顶点,切线竖直,$\dfrac{dy}{dx}\to\infty$,与 $\cot t$ 发散一致。</div></div>
+
+<div class="card eg"><span class="tag">例 10 · 高阶导数·归纳</span>
+<p>求 $y=\sin x$ 的 $n$ 阶导数。</p>
+<div class="step"><span class="sn">01</span>列前几阶找规律:$y'=\cos x=\sin\!\left(x+\dfrac{\pi}{2}\right)$。</div>
+<div class="step"><span class="sn">02</span>$y''=-\sin x=\sin\!\left(x+\dfrac{2\pi}{2}\right)$。</div>
+<div class="step"><span class="sn">03</span>$y'''=-\cos x=\sin\!\left(x+\dfrac{3\pi}{2}\right)$。</div>
+<div class="step"><span class="sn">04</span>归纳:$\sin$ 每求导一次相当于自变量加 $\dfrac{\pi}{2}$,故</div>
+<p class="ka">$$y^{(n)}=\sin\!\left(x+\frac{n\pi}{2}\right)$$</p>
+<div class="step"><span class="sn">05</span>用数学归纳法可严格验证(略)。$\blacksquare$</div></div>
+
+<div class="card eg"><span class="tag">例 11 · 莱布尼茨公式</span>
+<p>求 $y=x^2 e^{2x}$ 的 $n$ 阶导数。</p>
+<div class="step"><span class="sn">01</span>观察:多项式 $x^2$ 三阶及以上导数为 $0$,$e^{2x}$ 各阶导数 $=2^k e^{2x}$。莱布尼茨和将自动截断到 $k=0,1,2$。</div>
+<div class="step"><span class="sn">02</span>写三项:</div>
+<p class="ka">$$(x^2 e^{2x})^{(n)}=\binom{n}{0}x^2\cdot 2^n e^{2x}+\binom{n}{1}(2x)\cdot 2^{n-1}e^{2x}+\binom{n}{2}(2)\cdot 2^{n-2}e^{2x}$$</p>
+<div class="step"><span class="sn">03</span>化简各项:$\binom{n}{0}x^2\cdot2^n=x^2\cdot2^n$;$\binom{n}{1}2x\cdot2^{n-1}=n\cdot x\cdot2^n$;$\binom{n}{2}2\cdot2^{n-2}=\dfrac{n(n-1)}{2}\cdot2^{n-1}=\dfrac{n(n-1)}{4}\cdot2^n$。</div>
+<div class="step"><span class="sn">04</span>合并提取公因子 $2^n e^{2x}$:</div>
+<p class="ka">$$(x^2 e^{2x})^{(n)}=2^n e^{2x}\!\left[x^2+nx+\frac{n(n-1)}{4}\right]$$</p>
+<div class="step"><span class="sn">05</span>验证 $n=1$:$2e^{2x}(x^2+x)$。直接求 $y'=2x e^{2x}+2x^2 e^{2x}=2e^{2x}(x+x^2)$。一致。$\blacksquare$</div></div>
+
+<div class="card eg"><span class="tag">例 12 · 微分近似应用</span>
+<p>用微分近似计算 $\sqrt{1.02}$。</p>
+<div class="step"><span class="sn">01</span>取 $f(x)=\sqrt{x}$,则 $f'(x)=\dfrac{1}{2\sqrt{x}}$。</div>
+<div class="step"><span class="sn">02</span>取 $x_0=1$($f(1)=1$ 易算),$\Delta x=0.02$。</div>
+<div class="step"><span class="sn">03</span>套近似公式 $f(x_0+\Delta x)\approx f(x_0)+f'(x_0)\Delta x$:</div>
+<p class="ka">$$\sqrt{1.02}\approx 1+\frac{1}{2\sqrt{1}}\cdot0.02=1+0.01=1.01$$</p>
+<div class="step"><span class="sn">04</span>对照精确值 $\sqrt{1.02}\approx1.00995\ldots$,误差约 $5\times10^{-5}$,精度极好。$\blacksquare$</div>
+<div class="note">选 $x_0$ 的原则:附近、且 $f(x_0),f'(x_0)$ 都好算。$\Delta x$ 越小越准。</div></div>
+
+<h2 id="quiz"><span class="n">14</span>练习(8 题)</h2>
+<div class="quiz"><q>1. 用定义求 $f(x)=\dfrac{1}{x}$ 的导数。</q>
+<details><summary>看详解</summary><div class="ans">差商 $\dfrac{\frac1{x+\Delta x}-\frac1x}{\Delta x}=\dfrac{x-(x+\Delta x)}{x(x+\Delta x)\Delta x}=\dfrac{-1}{x(x+\Delta x)}\xrightarrow{\Delta x\to0}-\dfrac{1}{x^2}$。故 $f'(x)=-\dfrac{1}{x^2}$。</div></details></div>
+<div class="quiz"><q>2. 求 $y=(2x+1)^3$ 的导数。</q>
+<details><summary>看详解</summary><div class="ans">设 $u=2x+1$,$y=u^3$。$y'=3u^2\cdot u'=3(2x+1)^2\cdot2=6(2x+1)^2$。</div></details></div>
+<div class="quiz"><q>3. 求 $y=x\sin x$ 的导数。</q>
+<details><summary>看详解</summary><div class="ans">乘法法则:$y'=(x)'\sin x+x(\sin x)'=\sin x+x\cos x$。</div></details></div>
+<div class="quiz"><q>4. 求 $y=\ln\!\left(x+\sqrt{1+x^2}\right)$ 的导数(提示:化简结果很干净)。</q>
+<details><summary>看详解</summary><div class="ans">设 $u=x+\sqrt{1+x^2}$,$y'=\dfrac{1}{u}\cdot u'$。$u'=1+\dfrac{x}{\sqrt{1+x^2}}=\dfrac{\sqrt{1+x^2}+x}{\sqrt{1+x^2}}$。故 $y'=\dfrac{1}{x+\sqrt{1+x^2}}\cdot\dfrac{\sqrt{1+x^2}+x}{\sqrt{1+x^2}}=\dfrac{1}{\sqrt{1+x^2}}$。</div></details></div>
+<div class="quiz"><q>5. 隐函数 $x^3+y^3=3axy$($a$ 为常数),求 $\dfrac{dy}{dx}$。</q>
+<details><summary>看详解</summary><div class="ans">两边对 $x$ 求导($xy$ 用乘法法则:$(xy)'=y+xy'$):$3x^2+3y^2 y'=3a(y+xy')$。两边除以 3:$x^2+y^2 y'=ay+axy'$。把含 $y'$ 的项集中:$y^2 y'-axy'=ay-x^2$,即 $y'(y^2-ax)=ay-x^2$。解得 $y'=\dfrac{ay-x^2}{y^2-ax}$(分母 $y^2\neq ax$)。</div></details></div>
+<div class="quiz"><q>6. 参数方程 $x=t^2,\ y=t^3$,求 $\dfrac{dy}{dx}$ 与 $\dfrac{d^2y}{dx^2}$。</q>
+<details><summary>看详解</summary><div class="ans">$\dfrac{dy}{dx}=\dfrac{(t^3)'}{(t^2)'}=\dfrac{3t^2}{2t}=\dfrac{3t}{2}$。二阶:$\dfrac{d^2y}{dx^2}=\dfrac{\dfrac{d}{dt}\!\left(\frac{3t}{2}\right)}{\dfrac{dx}{dt}}=\dfrac{3/2}{2t}=\dfrac{3}{4t}$($t\neq0$)。</div></details></div>
+<div class="quiz"><q>7. 求 $y=e^x\sin x$ 的 $n$ 阶导数。</q>
+<details><summary>看详解</summary><div class="ans">$y'=e^x\sin x+e^x\cos x=e^x(\sin x+\cos x)=\sqrt2\,e^x\sin\!\left(x+\dfrac{\pi}{4}\right)$。归纳每求导一次自变量加 $\dfrac{\pi}{4}$、振幅乘 $\sqrt2$:$y^{(n)}=(\sqrt2)^n e^x\sin\!\left(x+\dfrac{n\pi}{4}\right)=2^{n/2}e^x\sin\!\left(x+\dfrac{n\pi}{4}\right)$。</div></details></div>
+<div class="quiz"><q>8. 用微分近似计算 $e^{0.05}$。</q>
+<details><summary>看详解</summary><div class="ans">$f(x)=e^x$,$f'(x)=e^x$。取 $x_0=0$,$\Delta x=0.05$。$e^{0.05}\approx e^0+e^0\cdot0.05=1+0.05=1.05$。(精确值 $1.05127\ldots$)</div></details></div>
+
+<div class="summary">
+<div class="st">本章小结</div>
+<p><span class="pill">定义</span>导数 $f'(x_0)=\lim\limits_{\Delta x\to0}\dfrac{f(x_0+\Delta x)-f(x_0)}{\Delta x}$ = 瞬时变化率 = 切线斜率。</p>
+<p><span class="pill">单侧</span>左、右导数都存在且相等 $\iff$ 可导。分段点、绝对值零点必用之。</p>
+<p><span class="pill">连续</span>可导 $\Rightarrow$ 连续(真);连续 $\Rightarrow$ 可导(假,反例 $|x|$ 在 $0$)。</p>
+<p><span class="pill">四则</span>$(uv)'=u'v+uv'$;$\left(\dfrac{u}{v}\right)'=\dfrac{u'v-uv'}{v^2}$。</p>
+<p><span class="pill">链式</span>复合 $y=f(g(x))$:$y'=f'(g(x))\,g'(x)$,由外向内逐层相乘。<b>最常考</b>。</p>
+<p><span class="pill">反函数</span>$\dfrac{dy}{dx}=\dfrac{1}{dx/dy}$(单调、导数非零)。</p>
+<p><span class="pill">高阶</span>$y^{(n)}=(y^{(n-1)})'$;莱布尼茨 $(uv)^{(n)}=\sum\binom{n}{k}u^{(k)}v^{(n-k)}$。</p>
+<p><span class="pill">隐/参数</span>隐函数两边对 $x$ 求导解 $y'$;参数 $\dfrac{dy}{dx}=\dfrac{\psi'(t)}{\varphi'(t)}$。</p>
+<p><span class="pill">微分</span>$dy=f'(x)dx$;$\Delta y\approx dy$;一阶微分形式不变性 $dy=f'(u)du$。</p>
+<p style="margin-top:16px;color:var(--txt3)"><b>下一章</b>:中值定理。导数告诉我们"每点变化多快",中值定理则把"每点变化"与"整体平均变化"挂上钩--罗尔、拉格朗日、柯西,是导数通向应用(单调性、极值、不等式)的桥梁。</p>
+</div>
+
+</main>
+
+<script>
+window.addEventListener('load',()=>{
+  if(window.renderMathInElement) renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+});
+function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+window.addEventListener('scroll',()=>{
+  const sc=document.documentElement.scrollTop,h=document.documentElement.scrollHeight-document.documentElement.clientHeight;
+  document.getElementById('prog').style.width=(sc/h*100)+'%';
+});
+
+/* viz 1: 割线极限成切线 */
+const cv1=document.getElementById('cv1'),c1=cv1.getContext('2d');
+const s1=document.getElementById('s1'),v1=document.getElementById('v1'),v1b=document.getElementById('v1b');
+function f1(x){return 0.3*x*x;}
+function fp1(x){return 0.6*x;}
+function draw1(){
+  const h=(+s1.value)/10;const x0=2;
+  v1.textContent=h.toFixed(2);
+  const ss=(f1(x0+h)-f1(x0))/h;const ts=fp1(x0);
+  v1b.textContent='割线斜率='+ss.toFixed(3)+'  切线斜率='+ts.toFixed(3);
+  const w=cv1.width,H=cv1.height;c1.clearRect(0,0,w,H);
+  const xmin=-0.8,xmax=5.5,ymin=-0.6,ymax=9;
+  const padL=36,padR=20,padT=16,padB=28;
+  const X=x=>padL+(x-xmin)/(xmax-xmin)*(w-padL-padR);
+  const Y=y=>(H-padB)-(y-ymin)/(ymax-ymin)*(H-padT-padB);
+  c1.strokeStyle='#1e2026';c1.lineWidth=1;
+  c1.beginPath();c1.moveTo(padL,Y(0));c1.lineTo(w-padR,Y(0));c1.moveTo(X(0),padT);c1.lineTo(X(0),H-padB);c1.stroke();
+  c1.fillStyle='#3a3d42';c1.font='11px Inter,monospace';c1.fillText('x',w-padR-4,Y(0)-6);c1.fillText('y',X(0)+6,padT+8);
+  c1.strokeStyle='#6e8ef5';c1.lineWidth=1.8;c1.beginPath();
+  for(let i=0;i<=200;i++){const x=xmin+(xmax-xmin)*i/200;const px=X(x),py=Y(f1(x));if(i===0)c1.moveTo(px,py);else c1.lineTo(px,py);}
+  c1.stroke();
+  c1.strokeStyle='#dcb366';c1.setLineDash([5,4]);c1.lineWidth=1.5;c1.beginPath();
+  c1.moveTo(X(x0-1.5),Y(f1(x0)-ts*1.5));c1.lineTo(X(x0+2.5),Y(f1(x0)+ts*2.5));c1.stroke();c1.setLineDash([]);
+  const px0=X(x0),py0=Y(f1(x0)),qx=X(x0+h),qy=Y(f1(x0+h));
+  c1.strokeStyle='#7ec89c';c1.lineWidth=1.8;c1.beginPath();c1.moveTo(px0,py0);c1.lineTo(qx,qy);c1.stroke();
+  c1.fillStyle='#e6e7eb';c1.beginPath();c1.arc(px0,py0,4,0,7);c1.fill();
+  c1.fillStyle='#7ec89c';c1.beginPath();c1.arc(qx,qy,4,0,7);c1.fill();
+  c1.font='11px Inter,monospace';
+  c1.fillStyle='#e6e7eb';c1.fillText('P',px0-14,py0-6);
+  c1.fillStyle='#7ec89c';c1.fillText('Q',qx+6,qy-6);
+  c1.fillStyle='#dcb366';c1.fillText('切线',X(x0+1.8),Y(f1(x0)+ts*1.8)-4);
+  c1.fillStyle='#7ec89c';c1.fillText('割线 PQ',qx+6,qy+14);
+}
+s1.oninput=draw1;draw1();
+
+/* viz 2: |x| 尖角不可导 */
+const cv2=document.getElementById('cv2'),c2=cv2.getContext('2d');
+const sel2=document.getElementById('sel2'),s2=document.getElementById('s2'),v2=document.getElementById('v2'),v2b=document.getElementById('v2b');
+function f2(x,name){if(name==='|x|')return Math.abs(x);return 0.4*x*x;}
+function fp2(x,name){if(name==='|x|')return x>0?1:(x<0?-1:NaN);return 0.8*x;}
+function draw2(){
+  const name=sel2.value;const x0=(+s2.value)/10-3;
+  v2.textContent=x0.toFixed(2);
+  const w=cv2.width,H=cv2.height;c2.clearRect(0,0,w,H);
+  const xmin=-3.5,xmax=3.5,ymin=-1,ymax=4.5;
+  const padL=36,padR=20,padT=16,padB=28;
+  const X=x=>padL+(x-xmin)/(xmax-xmin)*(w-padL-padR);
+  const Y=y=>(H-padB)-(y-ymin)/(ymax-ymin)*(H-padT-padB);
+  c2.strokeStyle='#1e2026';c2.lineWidth=1;
+  c2.beginPath();c2.moveTo(padL,Y(0));c2.lineTo(w-padR,Y(0));c2.moveTo(X(0),padT);c2.lineTo(X(0),H-padB);c2.stroke();
+  c2.fillStyle='#3a3d42';c2.font='11px Inter,monospace';c2.fillText('x',w-padR-4,Y(0)-6);c2.fillText('y',X(0)+6,padT+8);
+  c2.strokeStyle='#6e8ef5';c2.lineWidth=1.8;c2.beginPath();
+  for(let i=0;i<=200;i++){const x=xmin+(xmax-xmin)*i/200;const px=X(x),py=Y(f2(x,name));if(i===0)c2.moveTo(px,py);else c2.lineTo(px,py);}
+  c2.stroke();
+  const px0=X(x0),py0=Y(f2(x0,name));
+  let msg='';
+  if(name==='|x|'&&Math.abs(x0)<0.06){
+    /* 尖角: 左半切线 -1, 右半切线 +1 */
+    c2.strokeStyle='#e08294';c2.setLineDash([5,4]);c2.lineWidth=1.6;
+    c2.beginPath();c2.moveTo(X(-1.6),Y(1.6));c2.lineTo(X(0),Y(0));c2.stroke();
+    c2.strokeStyle='#6fc8d8';
+    c2.beginPath();c2.moveTo(X(0),Y(0));c2.lineTo(X(1.6),Y(1.6));c2.stroke();c2.setLineDash([]);
+    c2.font='11px Inter,monospace';
+    c2.fillStyle='#e08294';c2.fillText('左导数=-1',X(-1.6)-6,Y(1.6)-6);
+    c2.fillStyle='#6fc8d8';c2.fillText('右导数=+1',X(1.3),Y(1.6)-6);
+    msg='左≠右,不可导(但连续)';
+    v2b.style.color='var(--warn)';
+  }else{
+    const ts=fp2(x0,name);
+    c2.strokeStyle='#dcb366';c2.setLineDash([5,4]);c2.lineWidth=1.5;c2.beginPath();
+    c2.moveTo(X(x0-1.3),Y(f2(x0,name)-ts*1.3));c2.lineTo(X(x0+1.3),Y(f2(x0,name)+ts*1.3));c2.stroke();c2.setLineDash([]);
+    msg="f'("+x0.toFixed(2)+")="+ts.toFixed(3);
+    v2b.style.color='var(--ok)';
+  }
+  v2b.textContent=msg;
+  c2.fillStyle='#e6e7eb';c2.beginPath();c2.arc(px0,py0,4,0,7);c2.fill();
+}
+sel2.onchange=draw2;s2.oninput=draw2;draw2();
+
+/* viz 3: 函数与导函数对照 */
+const cv3=document.getElementById('cv3'),c3=cv3.getContext('2d');
+const sel3=document.getElementById('sel3'),s3=document.getElementById('s3'),v3=document.getElementById('v3'),v3b=document.getElementById('v3b');
+const fn3={
+  'x²':{f:x=>x*x,fp:x=>2*x,xmin:-2.4,xmax:2.4,ymin1:-1,ymax1:5.5,ymin2:-5.5,ymax2:5.5},
+  'sin x':{f:Math.sin,fp:Math.cos,xmin:-Math.PI,xmax:Math.PI,ymin1:-1.6,ymax1:1.6,ymin2:-1.6,ymax2:1.6},
+  'e^x':{f:Math.exp,fp:Math.exp,xmin:-1.6,xmax:1.6,ymin1:0,ymax1:5.2,ymin2:0,ymax2:5.2},
+  'ln x':{f:Math.log,fp:x=>1/x,xmin:0.3,xmax:3,ymin1:-1.6,ymax1:1.4,ymin2:-0.3,ymax2:3.6}
+};
+function draw3(){
+  const o=fn3[sel3.value];
+  const x=o.xmin+(+s3.value)/100*(o.xmax-o.xmin);
+  v3.textContent=x.toFixed(2);
+  const ts=o.fp(x);
+  v3b.textContent="f'="+ts.toFixed(3);
+  const w=cv3.width,H=cv3.height;c3.clearRect(0,0,w,H);
+  const padL=34,padR=18,padT=12,padB=22,gap=12;
+  const topH=Math.floor((H-gap)/2),botY=topH+gap;
+  const X=xv=>padL+(xv-o.xmin)/(o.xmax-o.xmin)*(w-padL-padR);
+  const Yt=yv=>padT+(1-(yv-o.ymin1)/(o.ymax1-o.ymin1))*(topH-padT-padB);
+  const Yb=yv=>botY+(1-(yv-o.ymin2)/(o.ymax2-o.ymin2))*(H-padB-botY);
+  c3.strokeStyle='#1e2026';c3.lineWidth=1;
+  if(o.ymin1<0&&o.ymax1>0){c3.beginPath();c3.moveTo(padL,Yt(0));c3.lineTo(w-padR,Yt(0));c3.stroke();}
+  c3.beginPath();c3.moveTo(padL,padT);c3.lineTo(padL,topH-padB);c3.stroke();
+  c3.strokeStyle='#6e8ef5';c3.lineWidth=1.8;c3.beginPath();
+  for(let i=0;i<=240;i++){const xv=o.xmin+(o.xmax-o.xmin)*i/240;const px=X(xv),py=Yt(o.f(xv));if(i===0)c3.moveTo(px,py);else c3.lineTo(px,py);}
+  c3.stroke();
+  c3.strokeStyle='#dcb366';c3.setLineDash([5,4]);c3.lineWidth=1.4;c3.beginPath();
+  c3.moveTo(X(x-1.3),Yt(o.f(x)-ts*1.3));c3.lineTo(X(x+1.3),Yt(o.f(x)+ts*1.3));c3.stroke();c3.setLineDash([]);
+  c3.fillStyle='#e6e7eb';c3.beginPath();c3.arc(X(x),Yt(o.f(x)),3.5,0,7);c3.fill();
+  c3.font='11px Inter,monospace';
+  c3.fillStyle='#9aa0a8';c3.fillText('y=f(x)',w-padR-52,padT+10);
+  c3.fillStyle='#dcb366';c3.fillText('切线斜率='+ts.toFixed(2),padL+6,padT+10);
+  c3.strokeStyle='#1e2026';
+  if(o.ymin2<0&&o.ymax2>0){c3.beginPath();c3.moveTo(padL,Yb(0));c3.lineTo(w-padR,Yb(0));c3.stroke();}
+  c3.beginPath();c3.moveTo(padL,botY);c3.lineTo(padL,H-padB);c3.stroke();
+  c3.strokeStyle='#e08294';c3.lineWidth=1.8;c3.beginPath();
+  for(let i=0;i<=240;i++){const xv=o.xmin+(o.xmax-o.xmin)*i/240;const px=X(xv),py=Yb(o.fp(xv));if(i===0)c3.moveTo(px,py);else c3.lineTo(px,py);}
+  c3.stroke();
+  c3.fillStyle='#e6e7eb';c3.beginPath();c3.arc(X(x),Yb(o.fp(x)),3.5,0,7);c3.fill();
+  c3.fillStyle='#9aa0a8';c3.fillText("y=f'(x)",w-padR-56,H-padB+2);
+  c3.strokeStyle='#3a3d42';c3.setLineDash([3,3]);c3.lineWidth=1;c3.beginPath();
+  c3.moveTo(X(x),Yt(o.f(x)));c3.lineTo(X(x),Yb(o.fp(x)));c3.stroke();c3.setLineDash([]);
+}
+sel3.onchange=draw3;s3.oninput=draw3;draw3();
+
+/* viz 4: Δy 与 dy */
+const cv4=document.getElementById('cv4'),c4=cv4.getContext('2d');
+const s4=document.getElementById('s4'),v4=document.getElementById('v4'),v4b=document.getElementById('v4b');
+function f4(x){return 0.3*x*x;}
+function fp4(x){return 0.6*x;}
+function draw4(){
+  const dx=(+s4.value)/10;const x0=2;
+  v4.textContent=dx.toFixed(2);
+  const dy=fp4(x0)*dx;const dY=f4(x0+dx)-f4(x0);
+  v4b.textContent='Δy='+dY.toFixed(3)+'  dy='+dy.toFixed(3)+'  误差='+(dY-dy).toFixed(3);
+  const w=cv4.width,H=cv4.height;c4.clearRect(0,0,w,H);
+  const xmin=-0.5,xmax=5.5,ymin=-0.5,ymax=8;
+  const padL=36,padR=20,padT=16,padB=28;
+  const X=x=>padL+(x-xmin)/(xmax-xmin)*(w-padL-padR);
+  const Y=y=>(H-padB)-(y-ymin)/(ymax-ymin)*(H-padT-padB);
+  c4.strokeStyle='#1e2026';c4.lineWidth=1;
+  c4.beginPath();c4.moveTo(padL,Y(0));c4.lineTo(w-padR,Y(0));c4.moveTo(X(0),padT);c4.lineTo(X(0),H-padB);c4.stroke();
+  c4.fillStyle='#3a3d42';c4.font='11px Inter,monospace';c4.fillText('x',w-padR-4,Y(0)-6);c4.fillText('y',X(0)+6,padT+8);
+  c4.strokeStyle='#6e8ef5';c4.lineWidth=1.8;c4.beginPath();
+  for(let i=0;i<=200;i++){const x=xmin+(xmax-xmin)*i/200;const px=X(x),py=Y(f4(x));if(i===0)c4.moveTo(px,py);else c4.lineTo(px,py);}
+  c4.stroke();
+  const ts=fp4(x0);
+  c4.strokeStyle='#dcb366';c4.setLineDash([5,4]);c4.lineWidth=1.4;c4.beginPath();
+  c4.moveTo(X(x0-1),Y(f4(x0)-ts));c4.lineTo(X(x0+3),Y(f4(x0)+ts*3));c4.stroke();c4.setLineDash([]);
+  const Ax=x0,Ay=f4(x0),Bx=x0+dx,By=f4(x0+dx),Cx=x0+dx,Cy=f4(x0)+ts*dx;
+  /* 水平虚线 A 到 Bx */
+  c4.strokeStyle='#3a3d42';c4.setLineDash([3,3]);c4.lineWidth=1;
+  c4.beginPath();c4.moveTo(X(Ax),Y(Ay));c4.lineTo(X(Bx),Y(Ay));c4.stroke();c4.setLineDash([]);
+  /* Δy 绿 (A->B 曲线增量) */
+  c4.strokeStyle='#7ec89c';c4.lineWidth=3;
+  c4.beginPath();c4.moveTo(X(Bx),Y(Ay));c4.lineTo(X(Bx),Y(By));c4.stroke();
+  /* dy 粉 (A->C 切线增量) */
+  c4.strokeStyle='#e08294';c4.lineWidth=3;
+  c4.beginPath();c4.moveTo(X(Cx),Y(Ay));c4.lineTo(X(Cx),Y(Cy));c4.stroke();
+  c4.fillStyle='#e6e7eb';c4.beginPath();c4.arc(X(Ax),Y(Ay),3.5,0,7);c4.fill();
+  c4.fillStyle='#7ec89c';c4.beginPath();c4.arc(X(Bx),Y(By),3.5,0,7);c4.fill();
+  c4.fillStyle='#e08294';c4.beginPath();c4.arc(X(Cx),Y(Cy),3.5,0,7);c4.fill();
+  c4.font='11px Inter,monospace';
+  c4.fillStyle='#7ec89c';c4.fillText('Δy='+dY.toFixed(3),X(Bx)+6,Y((Ay+By)/2));
+  c4.fillStyle='#e08294';c4.fillText('dy='+dy.toFixed(3),X(Cx)+6,Y(Cy)-6);
+  c4.fillStyle='#e6e7eb';c4.fillText('A',X(Ax)-12,Y(Ay)-6);
+  c4.fillStyle='#7ec89c';c4.fillText('B',X(Bx)-14,Y(By)+4);
+  c4.fillStyle='#e08294';c4.fillText('C',X(Cx)-12,Y(Cy)+12);
+}
+s4.oninput=draw4;draw4();
+</script>
+</body>
+</html>

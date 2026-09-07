@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>考研数学可视化教材 · 目录</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0b0e;--surface:#111317;--surface2:#16181d;--border:#1e2026;--txt:#e6e7eb;--txt2:#9aa0a8;--txt3:#6b7078;--txt4:#3a3d42;--acc:#6e8ef5;--ok:#7ec89c;--acc-soft:rgba(110,142,245,.08)}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font-family:'Inter',system-ui,sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased;background-image:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(110,142,245,.06),transparent)}
+  .wrap{max-width:960px;margin:0 auto;padding:56px 32px 120px}
+  .eyebrow{font-size:12px;color:var(--acc);letter-spacing:3px;text-transform:uppercase;font-weight:600}
+  h1{font-size:38px;font-weight:800;color:var(--txt);margin:8px 0 10px;letter-spacing:-0.02em}
+  .lead{font-size:16px;color:var(--txt2);max-width:680px;margin-bottom:8px}
+  .progress{display:flex;align-items:center;gap:14px;margin:28px 0 8px}
+  .bar{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;max-width:400px}
+  .bar i{display:block;height:100%;background:var(--acc);width:100%;border-radius:3px}
+  .pct{font-size:13px;color:var(--ok);font-weight:600}
+  .sec{margin-top:48px}.sec h2{font-size:20px;font-weight:700;color:var(--txt);margin:0 0 6px}.sec .sub{font-size:13px;color:var(--txt3);margin-bottom:18px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .card{display:block;text-decoration:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 20px;transition:.18s;color:var(--txt);position:relative}
+  .card:hover{border-color:var(--acc);transform:translateY(-2px)}
+  .card .n{font-size:11px;color:var(--txt4);font-weight:600;letter-spacing:1px}.card .t{font-size:15px;font-weight:600;margin:4px 0 6px}.card .d{font-size:12px;color:var(--txt3);line-height:1.5}
+  .card .st{position:absolute;top:16px;right:16px;font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:2px 8px;border-radius:3px;background:rgba(126,200,156,.12);color:var(--ok)}
+  .foot{margin-top:56px;padding-top:24px;border-top:1px solid var(--border);font-size:12px;color:var(--txt4);line-height:1.7}
+  @media(max-width:600px){.wrap{padding:36px 20px}.grid{grid-template-columns:1fr}}
+</style></head>
+<body><div class="wrap">
+  <div class="eyebrow">考研数学 · 可视化教材</div>
+  <h1>高等数学 & 线性代数</h1>
+  <p class="lead">按数一最全范围(数二数三为子集)编写,共 16 章。每章含通俗概念引入、公式逐符号拆解、分步计算例题、交互可视化、练习详解。从零基础到考研通透。</p>
+  <div class="progress"><div class="bar"><i></i></div><span class="pct">16 / 16 章 · 100% 完成</span></div>
+
+  <div class="sec"><h2>高等数学</h2><p class="sub">10 章 · 函数极限到常微分方程</p><div class="grid">
+    <a class="card" href="math_seq.html"><span class="st">已完成</span><div class="n">第 1 章</div><div class="t">函数与极限</div><div class="d">数列极限 ε-N、函数极限 ε-δ、连续与间断</div></a>
+    <a class="card" href="math_ch02.html"><span class="st">已完成</span><div class="n">第 2 章</div><div class="t">导数与微分</div><div class="d">导数概念、求导法则、链式、隐函数、微分</div></a>
+    <a class="card" href="math_ch03.html"><span class="st">已完成</span><div class="n">第 3 章</div><div class="t">中值定理与导数应用</div><div class="d">罗尔/拉格朗日/柯西、洛必达、泰勒、极值凹凸</div></a>
+    <a class="card" href="math_ch04.html"><span class="st">已完成</span><div class="n">第 4 章</div><div class="t">不定积分</div><div class="d">原函数、换元法、分部积分、有理函数</div></a>
+    <a class="card" href="math_ch05.html"><span class="st">已完成</span><div class="n">第 5 章</div><div class="t">定积分及应用</div><div class="d">牛顿莱布尼茨、变限积分、反常积分、面积体积弧长</div></a>
+    <a class="card" href="math_ch06.html"><span class="st">已完成</span><div class="n">第 6 章</div><div class="t">多元函数微分学</div><div class="d">偏导、全微分、复合隐函数、方向导数梯度、极值</div></a>
+    <a class="card" href="math_ch07.html"><span class="st">已完成</span><div class="n">第 7 章</div><div class="t">重积分</div><div class="d">二重(直角/极坐标)、三重(直角/柱/球)</div></a>
+    <a class="card" href="math_ch08.html"><span class="st">已完成</span><div class="n">第 8 章</div><div class="t">曲线曲面积分</div><div class="d">格林、高斯、斯托克斯公式、散度旋度</div></a>
+    <a class="card" href="math_ch09.html"><span class="st">已完成</span><div class="n">第 9 章</div><div class="t">无穷级数</div><div class="d">常数项级数判敛、幂级数、傅里叶级数</div></a>
+    <a class="card" href="math_ch10.html"><span class="st">已完成</span><div class="n">第 10 章</div><div class="t">常微分方程</div><div class="d">一阶(可分离/齐次/线性/伯努利)、二阶常系数</div></a>
+  </div></div>
+
+  <div class="sec"><h2>线性代数</h2><p class="sub">6 章 · 行列式到二次型</p><div class="grid">
+    <a class="card" href="math_ch11.html"><span class="st">已完成</span><div class="n">第 11 章</div><div class="t">行列式</div><div class="d">n阶定义、性质、展开定理、克拉默法则</div></a>
+    <a class="card" href="math_ch12.html"><span class="st">已完成</span><div class="n">第 12 章</div><div class="t">矩阵</div><div class="d">运算、逆、伴随求逆、初等变换、秩</div></a>
+    <a class="card" href="math_ch13.html"><span class="st">已完成</span><div class="n">第 13 章</div><div class="t">向量</div><div class="d">线性组合、相关无关、极大无关组、秩、正交化</div></a>
+    <a class="card" href="math_ch14.html"><span class="st">已完成</span><div class="n">第 14 章</div><div class="t">线性方程组</div><div class="d">解的判定、基础解系、解的结构</div></a>
+    <a class="card" href="math_ch15.html"><span class="st">已完成</span><div class="n">第 15 章</div><div class="t">特征值与特征向量</div><div class="d">特征方程、相似、对角化、实对称正交对角化</div></a>
+    <a class="card" href="math_ch16.html"><span class="st">已完成</span><div class="n">第 16 章</div><div class="t">二次型</div><div class="d">标准形、正交变换、规范形、正定判定</div></a>
+  </div></div>
+
+  <div class="foot">
+    <b style="color:var(--txt2)">全书完成</b>:16 章,约 7200 行,覆盖考研数一全部知识点(数二数三为子集)。<br>
+    <b style="color:var(--txt2)">每章含</b>:通俗概念引入 + 公式逐符号拆解 + 分步计算例题(10+) + 交互 Canvas 可视化(3-4)+ 练习详解(8+)。<br>
+    <b style="color:var(--txt2)">配合</b>:以同济《高等数学》《线性代数》教材为主线,本教材负责可视化讲解与练习。<br>
+    <b style="color:var(--txt2)">访问</b>:从本页点击任一章节进入;本地 server <code>http://localhost:8000</code>。
+  </div>
+</div></body></html>

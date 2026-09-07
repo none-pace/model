@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>重积分</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root{
+    --bg:#0a0b0e; --surface:#111317; --surface2:#16181d;
+    --border:#1e2026; --border2:#272a31;
+    --txt:#e6e7eb; --txt2:#9aa0a8; --txt3:#6b7078; --txt4:#3a3d42;
+    --acc:#6e8ef5; --acc2:#8aa0f7; --acc-soft:rgba(110,142,245,.08);
+    --ok:#7ec89c; --warn:#dcb366; --pink:#e08294; --teal:#6fc8d8;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:'Inter',system-ui,sans-serif;line-height:1.85;font-size:15.5px;-webkit-font-smoothing:antialiased}
+  #nav{position:fixed;top:0;left:0;width:240px;height:100vh;overflow-y:auto;background:var(--bg);border-right:1px solid var(--border);padding:24px 0;z-index:20}
+  #nav .brand{padding:0 20px 18px;font-weight:700;font-size:14px;color:var(--txt);border-bottom:1px solid var(--border);margin-bottom:14px}
+  #nav .brand .s{display:block;font-size:11px;color:var(--txt3);font-weight:400;margin-top:2px}
+  #nav .grp{padding:0 20px;color:var(--txt4);font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin:16px 0 6px;font-weight:600}
+  #nav a{display:block;padding:5px 20px;color:var(--txt2);font-size:13px;cursor:pointer;text-decoration:none;transition:color .15s}
+  #nav a:hover{color:var(--txt)}
+  #nav a.active{color:var(--acc)}
+  #progwrap{position:fixed;top:0;left:240px;right:0;height:2px;background:var(--border);z-index:30}
+  #prog{height:100%;background:var(--acc);width:0;transition:width .15s}
+  main{margin-left:240px;max-width:780px;padding:64px 56px 160px}
+  .cover{padding-bottom:32px;border-bottom:1px solid var(--border);margin-bottom:40px}
+  .cover .eyebrow{font-size:12px;color:var(--acc);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+  .cover h1{font-size:36px;font-weight:800;color:var(--txt);margin:10px 0 14px;line-height:1.2;letter-spacing:-0.02em}
+  .cover .lead{font-size:16px;color:var(--txt2);max-width:620px;line-height:1.7}
+  .meta{display:flex;gap:24px;margin-top:24px;flex-wrap:wrap}
+  .meta .m{font-size:12px;color:var(--txt3)}
+  .meta .m b{color:var(--txt2);font-weight:600}
+  h2{font-size:21px;font-weight:700;color:var(--txt);margin-top:56px;letter-spacing:-0.01em}
+  h2 .n{color:var(--txt4);font-weight:500;margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:16px;font-weight:600;color:var(--txt);margin-top:32px}
+  p{margin:16px 0}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:22px 26px;margin:20px 0}
+  .tag{display:block;font-size:10.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}
+  .card.def .tag{color:var(--acc)}
+  .card.thm .tag{color:var(--warn)}
+  .card.eg .tag{color:var(--ok)}
+  .card.tip .tag{color:var(--pink)}
+  .note{background:var(--surface2);border-radius:6px;padding:14px 18px;margin:18px 0;font-size:14.5px;color:var(--txt2)}
+  .note b{color:var(--txt)}
+  .step{padding:10px 0 10px 20px;margin:8px 0;border-left:2px solid var(--border2);font-size:14.5px}
+  .step .sn{display:inline-block;color:var(--txt4);font-weight:600;width:24px;margin-left:-20px;margin-right:8px;font-variant-numeric:tabular-nums}
+  .step b{color:var(--acc2)}
+  .viz{margin:28px 0}
+  .viz .vt{font-size:12px;color:var(--txt3);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+  .viz h4{font-size:15px;font-weight:600;color:var(--txt);margin:0 0 8px}
+  canvas{display:block;background:#0c0d11;border:1px solid var(--border);border-radius:6px;margin:14px 0;max-width:100%}
+  .ctrl{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin:10px 0;font-size:13px;color:var(--txt2)}
+  .ctrl input[type=range]{accent-color:var(--acc);height:4px}
+  .ctrl .val{color:var(--txt);font-family:'Inter',monospace;font-weight:600;font-size:13px}
+  .ctrl select{background:var(--surface2);color:var(--txt);border:1px solid var(--border2);border-radius:4px;padding:3px 8px;font-size:13px}
+  .ka{display:block;text-align:center;margin:18px 0;overflow-x:auto;padding:6px 0;font-size:16px}
+  table{border-collapse:collapse;margin:16px 0;width:100%;font-size:13.5px}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:center}
+  th{background:var(--surface2);color:var(--txt);font-weight:600}
+  .quiz{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:18px 24px;margin:16px 0}
+  .quiz q{display:block;font-weight:600;color:var(--txt);margin-bottom:8px;font-size:15px}
+  details{margin:6px 0}
+  summary{cursor:pointer;color:var(--acc);font-size:13px;padding:4px 0;font-weight:500}
+  summary:hover{color:var(--acc2)}
+  .ans{background:var(--surface2);border-radius:6px;padding:14px 18px;margin-top:8px;font-size:14px;color:var(--txt2)}
+  .ans b{color:var(--txt)}
+  .pill{display:inline-block;background:var(--acc-soft);color:var(--acc);padding:1px 9px;border-radius:4px;font-size:11.5px;font-weight:600;margin-right:8px}
+  .summary{background:var(--surface2);border-radius:8px;padding:24px 30px;margin:36px 0 0}
+  .summary .st{font-size:11px;color:var(--txt3);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+  @media(max-width:900px){#nav{display:none}#progwrap{left:0}main{margin-left:0;padding:40px 24px}}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="brand">可视化数学<span class="s">高等数学 · 自学教材</span></div>
+  <div class="grp">本节</div>
+  <a class="active">封面</a>
+  <a onclick="go('intro')">二重积分概念</a>
+  <a onclick="go('prop')">二重积分性质</a>
+  <a onclick="go('rect')">直角坐标计算</a>
+  <a onclick="go('swap')">交换积分次序</a>
+  <a onclick="go('polar')">极坐标计算</a>
+  <a onclick="go('sym')">对称性简化</a>
+  <a onclick="go('tri')">三重积分·直角</a>
+  <a onclick="go('cyl')">柱坐标</a>
+  <a onclick="go('sph')">球坐标</a>
+  <a onclick="go('app')">重积分应用</a>
+  <a onclick="go('quiz')">练习</a>
+  <div class="grp">后续</div>
+  <a style="color:var(--txt4)">曲线积分</a>
+  <a style="color:var(--txt4)">曲面积分</a>
+  <a style="color:var(--txt4)">高斯公式</a>
+  <a style="color:var(--txt4)">斯托克斯公式</a>
+</nav>
+<div id="progwrap"><div id="prog"></div></div>
+
+<main>
+
+<div class="cover">
+  <div class="eyebrow">第七章 · 重积分</div>
+  <h1>重积分</h1>
+  <p class="lead">把一元定积分的"分割—求和—取极限"从区间推广到平面区域与空间立体。从曲顶柱体的体积出发,讲透二重、三重积分的算法、坐标变换与对称性技巧,配 12 道分级例题与 8 道练习。学完它,曲线、曲面积分只是换个积分域。</p>
+  <div class="meta">
+    <div class="m"><b>约 90 分钟</b></div>
+    <div class="m"><b>12 例题 · 8 练习</b></div>
+    <div class="m"><b>4 个交互演示</b></div>
+  </div>
+</div>
+
+<h2 id="intro"><span class="n">01</span>二重积分的概念</h2>
+<p>定积分 $\int_a^b f(x)\,dx$ 处理的是<b>区间上</b>的求和(如曲边梯形面积)。若把区间换成<b>平面区域</b>$D$,函数换成二元函数 $f(x,y)$,就得到二重积分。先看它的几何来源--<b>曲顶柱体的体积</b>。</p>
+
+<div class="card tip"><span class="tag">直观来源</span>
+<p>设 $z=f(x,y)\ge0$ 在有界闭区域 $D$ 上连续。以 $D$ 为底、曲面 $z=f(x,y)$ 为顶、侧面是以 $D$ 的边界为准线、母线平行于 $z$ 轴的柱面,围成的立体叫<b>曲顶柱体</b>。求它的体积 $V$。</p>
+<p>若顶是平的(高恒为 $h$),$V=h\cdot\sigma$($\sigma$ 是 $D$ 的面积)。但曲顶的高 $f(x,y)$ 随点变化,不能直接乘。怎么破?沿用定积分的<b>四步法</b>。</p></div>
+
+<div class="card"><span class="tag" style="color:var(--acc)">四步法</span>
+<div class="step"><span class="sn">01</span><b>分割</b>:把 $D$ 任意分成 $n$ 个小闭区域 $\Delta\sigma_1,\ldots,\Delta\sigma_n$(面积也记 $\Delta\sigma_i$),记 $\lambda=\max\limits_i\,\mathrm{diam}(\Delta\sigma_i)$ 为最大直径。</div>
+<div class="step"><span class="sn">02</span><b>取点</b>:在每个 $\Delta\sigma_i$ 内任取一点 $(\xi_i,\eta_i)$,以 $f(\xi_i,\eta_i)$ 为高、$\Delta\sigma_i$ 为底作一个<b>平顶</b>小柱体,体积 $\approx f(\xi_i,\eta_i)\,\Delta\sigma_i$。</div>
+<div class="step"><span class="sn">03</span><b>求和</b>:$V\approx\sum\limits_{i=1}^n f(\xi_i,\eta_i)\,\Delta\sigma_i$(黎曼和)。</div>
+<div class="step"><span class="sn">04</span><b>取极限</b>:让 $\lambda\to0$(分割无限细),若和式极限存在且<b>与分割、取点方式无关</b>,该极限就是曲顶柱体体积。</div></div>
+
+<div class="card def"><span class="tag">定义 · 二重积分</span>
+<p>设 $f(x,y)$ 在有界闭区域 $D$ 上有界。若极限 $\lim\limits_{\lambda\to0}\sum\limits_{i=1}^n f(\xi_i,\eta_i)\,\Delta\sigma_i$ 存在(与分割、取点无关),则称 $f$ 在 $D$ 上<b>可积</b>,此极限为 $f$ 在 $D$ 上的<b>二重积分</b>,记</p>
+<p class="ka">$$\iint_D f(x,y)\,d\sigma \;=\; \lim_{\lambda\to0}\sum_{i=1}^n f(\xi_i,\eta_i)\,\Delta\sigma_i$$</p>
+<p>其中 $f$ 叫被积函数,$D$ 叫积分区域,$d\sigma$ 叫面积元素。直角坐标下 $d\sigma=dxdy$,故也写作 $\iint_D f(x,y)\,dxdy$。</p></div>
+
+<div class="note"><b>几何意义</b>:$f\ge0$ 时,$\iint_D f\,d\sigma$ 是曲顶柱体体积;$f\le0$ 时是柱体体积的相反数;一般情形是 $xOy$ 面<b>上方</b>体积减<b>下方</b>体积。<b>物理意义</b>:若 $f$ 是薄片面密度,$\iint_D f\,d\sigma$ 是薄片总质量。</p></div>
+
+<div class="note"><b>可积的充分条件</b>:若 $f$ 在有界闭区域 $D$ 上<b>连续</b>,或 $f$ 在 $D$ 上有界且只在有限条光滑曲线上间断,则 $f$ 在 $D$ 上可积。考研题里默认连续,放心积分。</div>
+
+<div class="viz">
+<div class="vt">交互演示</div>
+<h4>分割逼近:黎曼和的极限</h4>
+<p>对 $f(x,y)=x+y$ 在 $D=[0,1]\times[0,1]$ 上做 $n\times n$ 等分,每格取中心点算黎曼和 $\sum f\,\Delta\sigma$。拖 $n$,看它如何逼近真值 $1$(颜色深浅表示 $f$ 值大小)。</p>
+<canvas id="cv1" width="780" height="260"></canvas>
+<div class="ctrl">
+  <label>n = <span class="val" id="v1">8</span>(分 $n\times n$ 格)</label>
+  <input type="range" id="s1" min="2" max="32" value="8" style="width:280px">
+  <span class="val" id="v1b">Σ ≈ 1.0000</span>
+  <span class="val" style="color:var(--ok)">真值 = 1</span>
+</div>
+<div class="note">$n=2$ 时和离 1 较远;$n$ 越大越接近 1。这正是"分割越细,黎曼和→积分"的几何含义。</div>
+</div>
+
+<h2 id="prop"><span class="n">02</span>二重积分的性质</h2>
+<p>二重积分与定积分几乎平行,性质可照搬。设以下积分都存在,$\sigma$ 记 $D$ 的面积。</p>
+<div class="card thm"><span class="tag">五条性质</span>
+<p><b>① 线性性</b>:$\iint_D(\alpha f+\beta g)\,d\sigma=\alpha\iint_D f\,d\sigma+\beta\iint_D g\,d\sigma$。</p>
+<p><b>② 区域可加性</b>:若 $D=D_1\cup D_2$ 且 $D_1,D_2$ 除边界外无公共部分,则 $\iint_D f\,d\sigma=\iint_{D_1}f\,d\sigma+\iint_{D_2}f\,d\sigma$。(分块积分依据)</p>
+<p><b>③ 比较定理</b>:若 $f\le g$ 在 $D$ 上,则 $\iint_D f\,d\sigma\le\iint_D g\,d\sigma$;特别 $\left|\iint_D f\,d\sigma\right|\le\iint_D|f|\,d\sigma$。</p>
+<p><b>④ 估值定理</b>:若 $m\le f\le M$ 在 $D$ 上,则 $m\sigma\le\iint_D f\,d\sigma\le M\sigma$。</p>
+<p><b>⑤ 中值定理</b>:若 $f$ 在 $D$ 上连续,则存在 $(\xi,\eta)\in D$ 使 $\iint_D f\,d\sigma=f(\xi,\eta)\cdot\sigma$。</p></div>
+<div class="note"><b>用法</b>:性质 ④⑤ 用来<b>估计或比较</b>积分(不计算具体值);性质 ② 用来<b>分块</b>(区域被分段光滑曲线切开时分别积分);性质 ① 是合并同类项。</div>
+
+<h2 id="rect"><span class="n">03</span>直角坐标计算</h2>
+<p>二重积分按定义算黎曼和极限几乎不可能,实战靠<b>化为二次累次积分</b>--把二重积分化成两次定积分。关键是把积分区域 $D$ 表成两种"型"。</p>
+
+<div class="card def"><span class="tag">X 型(先 $y$ 后 $x$)</span>
+<p>若 $D=\{(x,y):a\le x\le b,\ \varphi_1(x)\le y\le\varphi_2(x)\}$--穿过 $D$ 内部且垂直于 $x$ 轴的直线与 $D$ 的边界至多交于两点,则</p>
+<p class="ka">$$\iint_D f(x,y)\,dxdy=\int_a^b\!\left[\int_{\varphi_1(x)}^{\varphi_2(x)} f(x,y)\,dy\right]dx$$</p>
+<p>记号约定:外层变量 $x$ 的限是常数 $a,b$;内层变量 $y$ 的限是 $x$ 的函数。</p></div>
+
+<div class="card def"><span class="tag">Y 型(先 $x$ 后 $y$)</span>
+<p>若 $D=\{(x,y):c\le y\le d,\ \psi_1(y)\le x\le\psi_2(y)\}$,则</p>
+<p class="ka">$$\iint_D f(x,y)\,dxdy=\int_c^d\!\left[\int_{\psi_1(y)}^{\psi_2(y)} f(x,y)\,dx\right]dy$$</p></div>
+
+<div class="note"><b>口诀</b>:<b>先积的限是函数,后积的限是常数</b>。算内层时把外层变量当常数,算完得到只含外层变量的函数,再算外层。</p></div>
+
+<div class="card eg"><span class="tag">例 1 · 直角计算基础</span>
+<p>计算 $\iint_D (x+y)\,dxdy$,$D=\{(x,y):0\le x\le1,\ 0\le y\le1\}$(单位正方形)。</p>
+<div class="step"><span class="sn">01</span>$D$ 是矩形,既是 X 型也是 Y 型,按 X 型(先 $y$ 后 $x$):$\int_0^1 dx\int_0^1 (x+y)\,dy$。</div>
+<div class="step"><span class="sn">02</span>算内层($x$ 当常数):$\int_0^1 (x+y)\,dy=\left[xy+\tfrac12 y^2\right]_0^1=x+\tfrac12$。</div>
+<div class="step"><span class="sn">03</span>算外层:$\int_0^1 (x+\tfrac12)\,dx=\left[\tfrac12 x^2+\tfrac12 x\right]_0^1=\tfrac12+\tfrac12=1$。</div>
+<div class="step"><span class="sn">04</span>所以 $\iint_D (x+y)\,dxdy=1$。$\blacksquare$</div></div>
+
+<div class="card eg"><span class="tag">例 2 · 直角计算(X 型区域)</span>
+<p>计算 $\iint_D x\,dxdy$,$D$ 由 $y=x$ 与 $y=x^2$ 围成。</p>
+<div class="step"><span class="sn">01</span>两曲线交点:解 $x=x^2$ 得 $x=0,1$,即 $(0,0),(1,1)$。在 $[0,1]$ 上 $x^2\le x$,故 $D=\{(x,y):0\le x\le1,\ x^2\le y\le x\}$。</div>
+<div class="step"><span class="sn">02</span>按 X 型:$\int_0^1 dx\int_{x^2}^{x} x\,dy$。</div>
+<div class="step"><span class="sn">03</span>内层:$\int_{x^2}^{x} x\,dy=x\cdot(x-x^2)=x^2-x^3$。</div>
+<div class="step"><span class="sn">04</span>外层:$\int_0^1 (x^2-x^3)\,dx=\left[\tfrac13 x^3-\tfrac14 x^4\right]_0^1=\tfrac13-\tfrac14=\tfrac1{12}$。</div>
+<div class="step"><span class="sn">05</span>所以 $\iint_D x\,dxdy=\dfrac1{12}$。$\blacksquare$</div></div>
+
+<h2 id="swap"><span class="n">04</span>交换积分次序</h2>
+<p>有时给定的累次积分次序<b>积不出</b>(内层无初等原函数),或区域用某种次序限很难看,需要交换。步骤固定:</p>
+<div class="card"><span class="tag" style="color:var(--acc)">三步法</span>
+<div class="step"><span class="sn">01</span><b>还原区域</b>:由原积分的上下限写出 $D$ 的不等式描述。</div>
+<div class="step"><span class="sn">02</span><b>画图</b>:画出 $D$,标出边界曲线与交点。</div>
+<div class="step"><span class="sn">03</span><b>重新定限</b>:按相反次序把 $D$ 重新表成另一种型,写出新的累次积分。</div></div>
+
+<div class="viz">
+<div class="vt">交互演示</div>
+<h4>积分区域与积分次序</h4>
+<p>区域 $D$ 由 $y=x$ 与 $y=x^2$($0\le x\le1$)围成。切换 X 型 / Y 型,看竖条/横条如何遍历 $D$,以及对应的限。</p>
+<canvas id="cv2" width="780" height="300"></canvas>
+<div class="ctrl">
+  <label>次序 <select id="sel2">
+    <option value="X">X 型(先 y 后 x)</option>
+    <option value="Y">Y 型(先 x 后 y)</option>
+  </select></label>
+  <span class="val" id="v2" style="color:var(--warn)">0≤x≤1, x²≤y≤x</span>
+</div>
+<div class="note">X 型竖条:固定 $x$,$y$ 从下边界 $x^2$ 到上边界 $x$。Y 型横条:固定 $y$,$x$ 从<b>左边界 $y$</b>(由 $y=x$ 反解 $x=y$)到<b>右边界 $\sqrt{y}$</b>(由 $y=x^2$ 反解 $x=\sqrt{y}$),$0\le y\le1$。换序的关键就是反解边界。</div>
+</div>
+
+<div class="card eg"><span class="tag">例 3 · 交换积分次序</span>
+<p>计算 $I=\int_0^1 dy\int_y^1 e^{-x^2}\,dx$。</p>
+<div class="step"><span class="sn">01</span>$\int e^{-x^2}\,dx$ 无初等原函数,先 $x$ 后 $y$ 这条路走不通,必须换序。</div>
+<div class="step"><span class="sn">02</span>还原区域:原式限 $0\le y\le1,\ y\le x\le1$。画图--$D$ 是由 $y=0$、$y=x$、$x=1$ 围成的三角形。</div>
+<div class="step"><span class="sn">03</span>改成 X 型:固定 $x\in[0,1]$,$y$ 从 $0$ 到 $x$,即 $0\le x\le1,\ 0\le y\le x$。</div>
+<div class="step"><span class="sn">04</span>$I=\int_0^1 dx\int_0^x e^{-x^2}\,dy$。内层 $e^{-x^2}$ 对 $y$ 是常数:$\int_0^x e^{-x^2}\,dy=x\,e^{-x^2}$。</div>
+<div class="step"><span class="sn">05</span>$I=\int_0^1 x\,e^{-x^2}\,dx=\left[-\tfrac12 e^{-x^2}\right]_0^1=\tfrac12(1-e^{-1})$。$\blacksquare$</div>
+<div class="note">换序后 $e^{-x^2}$ 留给外层,凑 $x\,dx=-\tfrac12 d(x^2)$ 即可。这是考研高频套路。</div></div>
+
+<h2 id="polar"><span class="n">05</span>极坐标计算</h2>
+<p>当积分区域是<b>圆、环、扇形</b>,或被积函数含 $x^2+y^2$、$\sqrt{x^2+y^2}$ 时,直角坐标的限会带根号、区间分块,难算。换极坐标往往一招制胜。</p>
+
+<div class="card def"><span class="tag">极坐标变换</span>
+<p>令 $x=r\cos\theta,\ y=r\sin\theta$。面积元素</p>
+<p class="ka">$$dxdy = r\,dr\,d\theta$$</p>
+<p>直观理解:极坐标网格的小格是"半径 $r$ 处、宽 $dr$、张角 $d\theta$ 的小扇形",面积 $\approx r\,dr\,d\theta$($r$ 越大弧越长,所以多一个 $r$)。</p>
+<p>若 $D$ 可表为 $\alpha\le\theta\le\beta,\ r_1(\theta)\le r\le r_2(\theta)$,则</p>
+<p class="ka">$$\iint_D f(x,y)\,dxdy=\int_\alpha^\beta d\theta\int_{r_1(\theta)}^{r_2(\theta)} f(r\cos\theta,r\sin\theta)\,r\,dr$$</p></div>
+
+<div class="card tip"><span class="tag">何时用极坐标(两信号)</span>
+<p><b>① 区域信号</b>:边界含 $x^2+y^2=R^2$、$x^2+y^2=2ax$ 等圆弧,或扇形、环形。</p>
+<p><b>② 被积信号</b>:含 $x^2+y^2$、$\sqrt{x^2+y^2}$、$\arctan(y/x)$ 等。</p>
+<p>满足任一信号就优先试极坐标。<b>千万别忘 $r\,dr$</b> 里那个 $r$--这是极坐标最容易漏的因子。</p></div>
+
+<div class="viz">
+<div class="vt">交互演示</div>
+<h4>极坐标网格与典型区域</h4>
+<p>同心圆 + 射线构成极坐标网格。切换区域类型,看它在极坐标下如何被一对 $(r,\theta)$ 限描述。</p>
+<canvas id="cv3" width="780" height="320"></canvas>
+<div class="ctrl">
+  <label>区域 <select id="sel3">
+    <option value="disk">圆盘 x²+y²≤1</option>
+    <option value="sector">扇形(第一象限)</option>
+    <option value="ring">圆环 1/2≤r≤1</option>
+    <option value="cardioid">心形线 r=1+cosθ</option>
+  </select></label>
+  <span class="val" id="v3" style="color:var(--acc)">0≤θ≤2π, 0≤r≤1</span>
+</div>
+<div class="note">圆盘、扇形、圆环的 $r$ 限是常数或分段常数;心形线 $r=1+\cos\theta$ 的 $r$ 限是 $\theta$ 的函数。极坐标的精髓:$r$ 限从原点方向"穿入、穿出"边界读出。</div>
+</div>
+
+<div class="card eg"><span class="tag">例 4 · 极坐标(圆域)</span>
+<p>计算 $\iint_D (x^2+y^2)\,d\sigma$,$D:x^2+y^2\le R^2$。</p>
+<div class="step"><span class="sn">01</span>区域是圆,被积含 $x^2+y^2$,双信号齐发--用极坐标。$D$:$0\le\theta\le2\pi,\ 0\le r\le R$。</div>
+<div class="step"><span class="sn">02</span>$x^2+y^2=r^2$,$d\sigma=r\,dr\,d\theta$,被积变 $r^2\cdot r=r^3$。</div>
+<div class="step"><span class="sn">03</span>$\iint_D=\int_0^{2\pi} d\theta\int_0^R r^3\,dr=2\pi\cdot\left[\tfrac14 r^4\right]_0^R=2\pi\cdot\tfrac{R^4}{4}=\tfrac{\pi R^4}{2}$。$\blacksquare$</div>
+<div class="note">结论可记:$\iint_{x^2+y^2\le R^2}(x^2+y^2)\,d\sigma=\tfrac{\pi R^4}{2}$,球坐标、转动惯量都用到。</div></div>
+
+<div class="card eg"><span class="tag">例 5 · 极坐标(含 x²+y²)</span>
+<p>计算 $\iint_D e^{-(x^2+y^2)}\,d\sigma$,$D:x^2+y^2\le a^2,\ x\ge0,\ y\ge0$(第一象限四分之一圆)。</p>
+<div class="step"><span class="sn">01</span>被积含 $x^2+y^2$,且 $e^{-x^2}$ 无初等原函数--直角坐标走不通,极坐标救命。</div>
+<div class="step"><span class="sn">02</span>$D$:$0\le\theta\le\tfrac\pi2,\ 0\le r\le a$。$e^{-(x^2+y^2)}=e^{-r^2}$,$d\sigma=r\,dr\,d\theta$。</div>
+<div class="step"><span class="sn">03</span>内层:$\int_0^a e^{-r^2} r\,dr$。凑微分 $r\,dr=\tfrac12 d(r^2)$:$=\left[-\tfrac12 e^{-r^2}\right]_0^a=\tfrac12(1-e^{-a^2})$。</div>
+<div class="step"><span class="sn">04</span>外层:$\int_0^{\pi/2}\tfrac12(1-e^{-a^2})\,d\theta=\tfrac\pi4(1-e^{-a^2})$。</div>
+<div class="step"><span class="sn">05</span>所以 $\iint_D e^{-(x^2+y^2)}\,d\sigma=\dfrac{\pi}{4}(1-e^{-a^2})$。$\blacksquare$</div>
+<div class="note">令 $a\to\infty$ 并乘 4(四个象限),得 $\int_{-\infty}^{+\infty}e^{-x^2}\,dx=\sqrt\pi$--泊松积分的来源。</div></div>
+
+<h2 id="sym"><span class="n">06</span>对称性简化</h2>
+<p>遇到对称区域,先看被积函数的<b>奇偶性</b>--常常一项直接归零,能省一半计算。</p>
+
+<div class="card thm"><span class="tag">对称性定理</span>
+<p>设 $D$ 关于 $x$ 轴对称,$D_1$ 为 $D$ 的上半($y\ge0$)部分:</p>
+<p><b>对 $y$ 奇</b>:$f(x,-y)=-f(x,y)\Rightarrow\iint_D f\,d\sigma=0$;</p>
+<p><b>对 $y$ 偶</b>:$f(x,-y)=f(x,y)\Rightarrow\iint_D f\,d\sigma=2\iint_{D_1}f\,d\sigma$。</p>
+<p>关于 $y$ 轴对称(对 $x$ 奇偶)同理。关于原点对称时,若 $f(-x,-y)=-f(x,y)$ 则积分为 $0$。</p></div>
+
+<div class="card tip"><span class="tag">两个条件缺一不可</span>
+<p>必须<b>区域对称</b>且<b>函数有相应奇偶性</b>,两者同时成立才能用。区域不对称、或函数非奇偶,都不能套。复杂被积式要<b>逐项</b>判断每个加项的奇偶性。</p></div>
+
+<div class="card eg"><span class="tag">例 6 · 对称性简化</span>
+<p>计算 $\iint_D (x+y^2+2)\,d\sigma$,$D:x^2+y^2\le4$。</p>
+<div class="step"><span class="sn">01</span>$D$ 关于 $x$ 轴、$y$ 轴都对称。把被积拆成三项分别判断。</div>
+<div class="step"><span class="sn">02</span>$x$ 项:$f(-x,y)=-x=-f(x,y)$,对 $x$ 奇,$D$ 关于 $y$ 轴对称 $\Rightarrow\iint_D x\,d\sigma=0$。</div>
+<div class="step"><span class="sn">03</span>$y^2$ 项:对 $x$、$y$ 都偶。用极坐标算:$\iint_D y^2\,d\sigma=\int_0^{2\pi}\sin^2\theta\,d\theta\int_0^2 r^2\cdot r\,dr=\pi\cdot\tfrac{16}{4}=4\pi$。</div>
+<div class="step"><span class="sn">04</span>常数项 $2$:$\iint_D 2\,d\sigma=2\cdot\sigma=2\cdot(4\pi)=8\pi$。</div>
+<div class="step"><span class="sn">05</span>合计 $0+4\pi+8\pi=12\pi$。$\blacksquare$</div>
+<div class="note">若不分项硬算,要算 $\iint(x+y^2+2)$ 全程极坐标,得列三角恒等式,麻烦。逐项判奇偶是把利刃。</div></div>
+
+<h2 id="tri"><span class="n">07</span>三重积分·直角坐标</h2>
+<p>把二重积分再升一维:在空间区域 $\Omega$ 上对 $f(x,y,z)$ 求和,得<b>三重积分</b>$\iiint_\Omega f\,dV$。几何意义:当 $f\ge0$,$dV$ 是体积元,积分不直接是体积(体积是 $\iiint 1\,dV$);物理意义:$f$ 是密度时积分为立体质量。</p>
+
+<div class="card def"><span class="tag">投影法(先一后二,先 z 后 xy)</span>
+<p>若 $\Omega$ 在 $xOy$ 面的投影为 $D$,且 $\Omega=\{(x,y,z):(x,y)\in D,\ z_1(x,y)\le z\le z_2(x,y)\}$,则</p>
+<p class="ka">$$\iiint_\Omega f\,dV=\iint_D\!\left[\int_{z_1(x,y)}^{z_2(x,y)} f\,dz\right]dxdy$$</p>
+<p>做法:先沿 $z$ 轴从下曲面 $z_1$ 积到上曲面 $z_2$,得到 $D$ 上的二重积分,再按第 03 节算。</p></div>
+
+<div class="card def"><span class="tag">截面法(先二后一,先 xy 后 z)</span>
+<p>若用 $z=$ 常数 的平面截 $\Omega$ 得截面 $D_z$,$z\in[a,b]$,则</p>
+<p class="ka">$$\iiint_\Omega f\,dV=\int_a^b\!dz\iint_{D_z} f\,dxdy$$</p>
+<p>当 $f$ 只依赖 $z$(如 $f=f(z)$),或截面 $D_z$ 面积易算时,此法极快。</p></div>
+
+<div class="card eg"><span class="tag">例 7 · 三重积分(投影法)</span>
+<p>计算 $\iiint_\Omega z\,dV$,$\Omega$ 由 $z=x^2+y^2$ 与 $z=1$ 围成。</p>
+<div class="step"><span class="sn">01</span>两曲面交线:令 $x^2+y^2=1$,得 $\Omega$ 在 $xOy$ 面投影 $D:x^2+y^2\le1$。$z$ 从下曲面 $x^2+y^2$ 到上曲面 $1$。</div>
+<div class="step"><span class="sn">02</span>按投影法:$\iiint_\Omega z\,dV=\iint_D\!\left[\int_{x^2+y^2}^{1} z\,dz\right]dxdy$。</div>
+<div class="step"><span class="sn">03</span>内层:$\int_{x^2+y^2}^{1} z\,dz=\tfrac12\!\left[1-(x^2+y^2)^2\right]$。</div>
+<div class="step"><span class="sn">04</span>剩下二重积分,被积含 $x^2+y^2$,$D$ 是圆--用极坐标:$\tfrac12\int_0^{2\pi} d\theta\int_0^1 (1-r^4)\,r\,dr$。</div>
+<div class="step"><span class="sn">05</span>内层:$\int_0^1 (r-r^5)\,dr=\tfrac12-\tfrac16=\tfrac13$;外层:$\tfrac12\cdot2\pi\cdot\tfrac13=\tfrac\pi3$。$\blacksquare$</div></div>
+
+<h2 id="cyl"><span class="n">08</span>柱坐标</h2>
+<p>当 $\Omega$ 有<b>轴对称性</b>(圆柱、圆锥、绕 $z$ 轴的旋转体),或被积含 $x^2+y^2$,用<b>柱坐标</b>$(r,\theta,z)$ 最方便--它就是"极坐标 $+$ 竖直 $z$"。</p>
+
+<div class="card def"><span class="tag">柱坐标变换</span>
+<p>$x=r\cos\theta,\ y=r\sin\theta,\ z=z$。体积元素</p>
+<p class="ka">$$dV = r\,dr\,d\theta\,dz$$</p>
+<p>多出来的 $r$ 与极坐标同源(环向弧长)。投影到 $xOy$ 面用极坐标,$z$ 方向不变。</p></div>
+
+<div class="card eg"><span class="tag">例 8 · 柱坐标</span>
+<p>计算 $\iiint_\Omega (x^2+y^2)\,dV$,$\Omega$ 由 $z=\sqrt{x^2+y^2}$(圆锥)与 $z=1$ 围成。</p>
+<div class="step"><span class="sn">01</span>圆锥与平面交:令 $\sqrt{x^2+y^2}=1$,得 $x^2+y^2=1$。$\Omega$ 在 $z$ 方向从锥面 $z=r$ 到平面 $z=1$;投影圆半径 $1$。</div>
+<div class="step"><span class="sn">02</span>柱坐标描述:$0\le\theta\le2\pi,\ 0\le r\le1,\ r\le z\le1$。</div>
+<div class="step"><span class="sn">03</span>$x^2+y^2=r^2$,$dV=r\,dz\,dr\,d\theta$。被积 $r^2\cdot r=r^3$。</div>
+<div class="step"><span class="sn">04</span>$\iiint=\int_0^{2\pi} d\theta\int_0^1 r^3\,dr\int_r^1 dz=2\pi\int_0^1 r^3(1-r)\,dr$。</div>
+<div class="step"><span class="sn">05</span>$\int_0^1 (r^3-r^4)\,dr=\tfrac14-\tfrac15=\tfrac1{20}$;结果 $=2\pi\cdot\tfrac1{20}=\tfrac\pi{10}$。$\blacksquare$</div>
+<div class="note">柱坐标做题套路:把 $z$ 限用 $r$ 表示,然后 $r\,dr\,d\theta$ 当二重积分处理,$z$ 单独积。</div></div>
+
+<h2 id="sph"><span class="n">09</span>球坐标</h2>
+<p>当 $\Omega$ 是<b>球、球冠、球与锥围成</b>的区域,或被积含 $x^2+y^2+z^2$,用<b>球坐标</b>$(\rho,\varphi,\theta)$ 最优。</p>
+
+<div class="card def"><span class="tag">球坐标变换</span>
+<p>$x=\rho\sin\varphi\cos\theta,\ y=\rho\sin\varphi\sin\theta,\ z=\rho\cos\varphi$。其中 $\rho\ge0$ 为到原点距离,$\varphi\in[0,\pi]$ 为与 $z$ 轴正向夹角,$\theta\in[0,2\pi]$ 为经度。体积元素</p>
+<p class="ka">$$dV=\rho^2\sin\varphi\,d\rho\,d\varphi\,d\theta$$</p>
+<p>三个因子各有来头:$\rho^2$ 来自径向球壳面积 $4\pi\rho^2$ 的微分;$\sin\varphi$ 来自纬度方向弧长($\varphi$ 越靠近极点,纬线圈越小)。</p></div>
+
+<div class="viz">
+<div class="vt">交互演示</div>
+<h4>三重积分区域:抛物面与平面围成</h4>
+<p>$\Omega$ 由 $z=x^2+y^2$ 与 $z=1$ 围成(投影法视角)。斜二测投影下,抛物面(橙虚,等高线)、上盖平面 $z=1$(绿)与底面投影 $D$(蓝)清晰可见。拖 $r$,看代表柱的高度 $1-r^2$ 如何随半径变化。</p>
+<canvas id="cv4" width="780" height="300"></canvas>
+<div class="ctrl">
+  <label>r = <span class="val" id="v4">0.50</span>(代表柱半径)</label>
+  <input type="range" id="s4" min="0" max="100" value="50" style="width:300px">
+  <span class="val" id="v4b" style="color:var(--acc)">柱高 = 1 - r² = 0.750</span>
+</div>
+<div class="note">在半径 $r$ 处,$z$ 从下曲面 $r^2$ 积到上曲面 $1$,柱高 $1-r^2$。$r\to1$ 时柱高趋于 $0$(曲面合拢),$r=0$ 处柱最高为 $1$。这就是投影法 $\int_{x^2+y^2}^{1}$ 的几何。</div>
+</div>
+
+<div class="card eg"><span class="tag">例 9 · 球坐标</span>
+<p>计算 $\iiint_\Omega (x^2+y^2+z^2)\,dV$,$\Omega:x^2+y^2+z^2\le R^2$(整球)。</p>
+<div class="step"><span class="sn">01</span>区域是球,被积 $x^2+y^2+z^2=\rho^2$--球坐标双信号齐发。</div>
+<div class="step"><span class="sn">02</span>$\Omega$:$0\le\rho\le R,\ 0\le\varphi\le\pi,\ 0\le\theta\le2\pi$。</div>
+<div class="step"><span class="sn">03</span>$dV=\rho^2\sin\varphi\,d\rho\,d\varphi\,d\theta$,被积 $\rho^2\cdot\rho^2=\rho^4$。</div>
+<div class="step"><span class="sn">04</span>分离变量:$\int_0^{2\pi} d\theta\cdot\int_0^\pi \sin\varphi\,d\varphi\cdot\int_0^R \rho^4\,d\rho=2\pi\cdot2\cdot\tfrac{R^5}{5}=\tfrac{4\pi R^5}{5}$。$\blacksquare$</div>
+<div class="note">球坐标三变量分离后是三个独立定积分相乘--这是它对球形区域无敌的原因。</div></div>
+
+<h2 id="app"><span class="n">10</span>重积分的应用</h2>
+<p>重积分把"微元求和"的物理、几何量算出来。常见四类:体积、质量、重心、转动惯量。密度记 $\rho$(面密度或体密度,看上下文)。</p>
+
+<div class="card thm"><span class="tag">应用公式表</span>
+<table>
+<tr><th>量</th><th>薄片($D$ 内)</th><th>立体($\Omega$ 内)</th></tr>
+<tr><td>体积</td><td>$V=\iint_D f\,d\sigma$(曲面下)</td><td>$V=\iiint_\Omega 1\,dV$</td></tr>
+<tr><td>质量</td><td>$M=\iint_D \rho\,d\sigma$</td><td>$M=\iiint_\Omega \rho\,dV$</td></tr>
+<tr><td>重心</td><td>$\bar x=\frac{\iint_D x\rho\,d\sigma}{M}$,$\bar y$ 同理</td><td>加 $\bar z=\frac{\iiint_\Omega z\rho\,dV}{M}$</td></tr>
+<tr><td>转动惯量</td><td>$I_x=\iint_D y^2\rho\,d\sigma$,$I_y=\iint_D x^2\rho\,d\sigma$</td><td>$I_z=\iiint_\Omega (x^2+y^2)\rho\,dV$</td></tr>
+</table>
+<div class="note"><b>重心公式记忆</b>:每个坐标 $\bar x$ = "(坐标 $\times$ 密度)的积分 / 总质量"。对称区域 + 均匀密度 $\Rightarrow$ 重心在对称轴/对称面上,可少算一个坐标。</div></div>
+
+<div class="card eg"><span class="tag">例 10 · 应用·体积</span>
+<p>求由 $z=x^2+y^2$ 与 $z=2-x^2-y^2$ 围成立体的体积。</p>
+<div class="step"><span class="sn">01</span>两抛物面交线:令 $x^2+y^2=2-x^2-y^2\Rightarrow x^2+y^2=1$。投影 $D:x^2+y^2\le1$,上盖减下盖 $=2-2(x^2+y^2)$。</div>
+<div class="step"><span class="sn">02</span>$V=\iint_D\!\left[(2-x^2-y^2)-(x^2+y^2)\right]d\sigma=\iint_D 2(1-x^2-y^2)\,d\sigma$。</div>
+<div class="step"><span class="sn">03</span>$D$ 是圆,用极坐标:$2\int_0^{2\pi} d\theta\int_0^1 (1-r^2)\,r\,dr$。</div>
+<div class="step"><span class="sn">04</span>内层:$\int_0^1 (r-r^3)\,dr=\tfrac12-\tfrac14=\tfrac14$;外层:$2\cdot2\pi\cdot\tfrac14=\pi$。$\blacksquare$</div></div>
+
+<div class="card eg"><span class="tag">例 11 · 应用·重心</span>
+<p>求均匀立体 $\Omega$(由 $z=x^2+y^2$ 与 $z=1$ 围成)的重心(密度常数)。</p>
+<div class="step"><span class="sn">01</span>$\Omega$ 关于 $xz$、$yz$ 面都对称且密度均匀 $\Rightarrow\bar x=\bar y=0$,只需求 $\bar z$。</div>
+<div class="step"><span class="sn">02</span>质量(密度取 $1$):$M=\iiint_\Omega 1\,dV=\iint_D (1-x^2-y^2)\,d\sigma=\int_0^{2\pi} d\theta\int_0^1 (1-r^2)\,r\,dr=2\pi\cdot\tfrac14=\tfrac\pi2$。</div>
+<div class="step"><span class="sn">03</span>对 $z$ 的一阶矩(例 7 已算):$\iiint_\Omega z\,dV=\tfrac\pi3$。</div>
+<div class="step"><span class="sn">04</span>$\bar z=\dfrac{\iiint_\Omega z\,dV}{M}=\dfrac{\pi/3}{\pi/2}=\dfrac23$。重心 $\left(0,0,\tfrac23\right)$。$\blacksquare$</div>
+<div class="note">重心在 $z$ 轴上且偏下方($\tfrac23<1$,更靠近宽的底)。直觉检验:底部体积大,重心偏低--对。</div></div>
+
+<div class="card eg"><span class="tag">例 12 · 应用·转动惯量</span>
+<p>求均匀球体 $x^2+y^2+z^2\le R^2$(质量 $M$)对 $z$ 轴的转动惯量 $I_z$。</p>
+<div class="step"><span class="sn">01</span>$I_z=\iiint_\Omega (x^2+y^2)\rho\,dV$。均匀密度 $\rho=\dfrac{M}{\frac43\pi R^3}=\dfrac{3M}{4\pi R^3}$。</div>
+<div class="step"><span class="sn">02</span>球坐标:$x^2+y^2=\rho^2\sin^2\varphi$,$dV=\rho^2\sin\varphi\,d\rho\,d\varphi\,d\theta$,被积 $\rho^4\sin^3\varphi$。</div>
+<div class="step"><span class="sn">03</span>分离变量:$\rho\int_0^{2\pi} d\theta\int_0^\pi \sin^3\varphi\,d\varphi\int_0^R \rho^4\,d\rho$。</div>
+<div class="step"><span class="sn">04</span>$\int_0^\pi\sin^3\varphi\,d\varphi=\tfrac43$;$\int_0^R \rho^4\,d\rho=\tfrac{R^5}{5}$。$I_z=\rho\cdot2\pi\cdot\tfrac43\cdot\tfrac{R^5}{5}=\tfrac{8\pi\rho R^5}{15}$。</div>
+<div class="step"><span class="sn">05</span>代 $\rho=\tfrac{3M}{4\pi R^3}$:$I_z=\tfrac{8\pi R^5}{15}\cdot\tfrac{3M}{4\pi R^3}=\tfrac25 MR^2$。$\blacksquare$</div>
+<div class="note">结论 $I_z=\tfrac25 MR^2$ 是经典结论:均匀球对过球心轴的转动惯量是 $\tfrac25 MR^2$(均匀球壳为 $\tfrac23 MR^2$,对照记忆)。</div></div>
+
+<h2 id="quiz"><span class="n">11</span>练习(8 题)</h2>
+<div class="quiz"><q>1. 计算 $\iint_D xy\,d\sigma$,$D$ 由 $y=x$ 与 $y=x^2$ 围成。</q>
+<details><summary>看详解</summary><div class="ans">$D=\{0\le x\le1,\ x^2\le y\le x\}$。$\int_0^1 dx\int_{x^2}^x xy\,dy=\int_0^1 x\cdot\tfrac12(x^2-x^4)\,dx=\tfrac12\int_0^1(x^3-x^5)\,dx=\tfrac12(\tfrac14-\tfrac16)=\tfrac1{24}$。</div></details></div>
+<div class="quiz"><q>2. 交换积分次序计算 $\int_0^1 dx\int_x^1 \sin(y^2)\,dy$。</q>
+<details><summary>看详解</summary><div class="ans">区域 $0\le y\le1,\ 0\le x\le y$。换序:$\int_0^1 dy\int_0^y\sin(y^2)\,dx=\int_0^1 y\sin(y^2)\,dy=\tfrac12(1-\cos1)$。</div></details></div>
+<div class="quiz"><q>3. 用极坐标计算 $\iint_D\sqrt{x^2+y^2}\,d\sigma$,$D:x^2+y^2\le2x$。</q>
+<details><summary>看详解</summary><div class="ans">$D$ 即 $r\le2\cos\theta$,$\theta\in[-\tfrac\pi2,\tfrac\pi2]$。$\int_{-\pi/2}^{\pi/2} d\theta\int_0^{2\cos\theta} r\cdot r\,dr=\int_{-\pi/2}^{\pi/2}\tfrac83\cos^3\theta\,d\theta=\tfrac83\cdot\tfrac43=\tfrac{32}{9}$。</div></details></div>
+<div class="quiz"><q>4. 利用对称性计算 $\iint_D(x^3y+y)\,d\sigma$,$D:x^2+y^2\le1$。</q>
+<details><summary>看详解</summary><div class="ans">$x^3y$ 对 $x$ 奇、$D$ 关于 $y$ 轴对称 $\Rightarrow$ 积 $0$;$y$ 对 $y$ 奇、$D$ 关于 $x$ 轴对称 $\Rightarrow$ 积 $0$。合计 $0$。</div></details></div>
+<div class="quiz"><q>5. 计算 $\iiint_\Omega x\,dV$,$\Omega$ 由三坐标面与 $x+y+z=1$ 围成(四面体)。</q>
+<details><summary>看详解</summary><div class="ans">$0\le x\le1,\ 0\le y\le1-x,\ 0\le z\le1-x-y$。$\int_0^1 dx\int_0^{1-x} dy\int_0^{1-x-y} x\,dz=\int_0^1 x\cdot\tfrac12(1-x)^2\,dx=\tfrac1{24}$。</div></details></div>
+<div class="quiz"><q>6. 用柱坐标计算 $\iiint_\Omega z\,dV$,$\Omega$ 由 $z=\sqrt{x^2+y^2}$ 与 $z=1$ 围成。</q>
+<details><summary>看详解</summary><div class="ans">柱坐标 $0\le\theta\le2\pi,\ 0\le r\le1,\ r\le z\le1$。$\int_0^{2\pi} d\theta\int_0^1 r\,dr\int_r^1 z\,dz=2\pi\int_0^1 r\cdot\tfrac12(1-r^2)\,dr=\pi\cdot\tfrac14=\tfrac\pi4$。</div></details></div>
+<div class="quiz"><q>7. 用球坐标计算 $\iiint_\Omega(x^2+y^2+z^2)\,dV$,$\Omega:x^2+y^2+z^2\le1$(单位球)。</q>
+<details><summary>看详解</summary><div class="ans">取例 9 中 $R=1$:$\tfrac{4\pi}{5}$。</div></details></div>
+<div class="quiz"><q>8. 求由 $z=x^2+y^2$ 与 $z=1$ 围成立体的体积。</q>
+<details><summary>看详解</summary><div class="ans">$V=\iint_D(1-x^2-y^2)\,d\sigma=\int_0^{2\pi} d\theta\int_0^1(1-r^2)r\,dr=2\pi\cdot\tfrac14=\tfrac\pi2$。</div></details></div>
+
+<div class="summary">
+<div class="st">本章小结</div>
+<p><span class="pill">概念</span>二重 / 三重积分 = 分割—求和—取极限,几何意义为曲顶柱体体积 / 立体质量。</p>
+<p><span class="pill">直角</span>化累次积分:X 型先 $y$ 后 $x$、Y 型先 $x$ 后 $y$;先积的限是函数,后积的限是常数。</p>
+<p><span class="pill">换序</span>还原区域 → 画图 → 反解边界重新定限。$e^{-x^2}$、$\sin(y^2)$ 类必换序。</p>
+<p><span class="pill">极坐标</span>$dxdy=r\,dr\,d\theta$,圆 / 扇形 / 含 $x^2+y^2$ 时用,别漏 $r$。</p>
+<p><span class="pill">对称性</span>区域对称 + 函数奇偶,逐项判断,奇项归零。</p>
+<p><span class="pill">三重</span>投影法(先 $z$ 后 $xy$)、截面法(先 $xy$ 后 $z$);柱坐标 $dV=r\,dr\,d\theta\,dz$,球坐标 $dV=\rho^2\sin\varphi\,d\rho\,d\varphi\,d\theta$。</p>
+<p><span class="pill">应用</span>体积、质量、重心、转动惯量;重心 = 一阶矩 / 质量,球体 $I_z=\tfrac25 MR^2$。</p>
+<p style="margin-top:16px;color:var(--txt3)"><b>下一章</b>:把积分域从平面区域、空间立体推广到<b>曲线</b>(曲线积分,第一、二类)与<b>曲面</b>(曲面积分),再用格林、高斯、斯托克斯三大公式把它们与低阶积分连通--本质都是"高维积分 = 低维积分 + 边界"。</p>
+</div>
+
+</main>
+
+<script>
+window.addEventListener('load',()=>{
+  if(window.renderMathInElement) renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+});
+function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+window.addEventListener('scroll',()=>{
+  const sc=document.documentElement.scrollTop,h=document.documentElement.scrollHeight-document.documentElement.clientHeight;
+  document.getElementById('prog').style.width=(sc/h*100)+'%';
+});
+function lerp(a,b,t){return a+(b-a)*t;}
+/* cv1: Riemann sum approximation over [0,1]^2 with f=x+y */
+const cv1=document.getElementById('cv1'),c1=cv1.getContext('2d');
+const s1=document.getElementById('s1'),v1=document.getElementById('v1'),v1b=document.getElementById('v1b');
+function draw1(){
+  const n=+s1.value;v1.textContent=n;
+  const w=cv1.width,h=cv1.height;c1.clearRect(0,0,w,h);
+  const pad=40,sz=Math.min(w-pad-16,h-pad-20),ox=pad,oy=h-pad;
+  const cell=sz/n;let sum=0;
+  for(let i=0;i<n;i++)for(let j=0;j<n;j++){
+    const x=(i+0.5)/n,y=(j+0.5)/n,f=x+y;sum+=f/(n*n);
+    const t=f/2;
+    const cr=Math.round(lerp(20,110,t)),cg=Math.round(lerp(24,142,t)),cb=Math.round(lerp(31,245,t));
+    c1.fillStyle='rgb('+cr+','+cg+','+cb+')';
+    c1.fillRect(ox+i*cell,oy-(j+1)*cell,cell,cell);
+  }
+  c1.strokeStyle='#1e2026';c1.lineWidth=1;c1.beginPath();
+  c1.moveTo(ox,oy);c1.lineTo(ox+sz+6,oy);c1.moveTo(ox,oy+6);c1.lineTo(ox,oy-sz-6);c1.stroke();
+  c1.strokeStyle='#272a31';c1.beginPath();
+  for(let k=1;k<n;k++){c1.moveTo(ox+k*cell,oy);c1.lineTo(ox+k*cell,oy-sz);c1.moveTo(ox,oy-k*cell);c1.lineTo(ox+sz,oy-k*cell);}c1.stroke();
+  c1.fillStyle='#6b7078';c1.font='11px Inter,monospace';
+  c1.fillText('0',ox-8,oy+14);c1.fillText('1',ox+sz-3,oy+14);c1.fillText('1',ox-14,oy-sz+4);
+  c1.fillText('x',ox+sz+10,oy+4);c1.fillText('y',ox-14,oy-sz-8);
+  v1b.textContent='Σ ≈ '+sum.toFixed(4);
+}
+s1.oninput=draw1;draw1();
+/* cv2: region between y=x and y=x^2, switch integration order */
+const cv2=document.getElementById('cv2'),c2=cv2.getContext('2d');
+const sel2=document.getElementById('sel2'),v2=document.getElementById('v2');
+function draw2(){
+  const mode=sel2.value;
+  const w=cv2.width,h=cv2.height;c2.clearRect(0,0,w,h);
+  const pad=40,sz=Math.min(w-pad-30,h-pad-20),ox=pad,oy=h-pad;
+  const X=x=>ox+x*sz,Y=y=>oy-y*sz;
+  c2.strokeStyle='#1e2026';c2.lineWidth=1;c2.beginPath();
+  c2.moveTo(ox,oy);c2.lineTo(ox+sz+12,oy);c2.moveTo(ox,oy+12);c2.lineTo(ox,oy-sz-12);c2.stroke();
+  c2.fillStyle='#3a3d42';c2.font='11px Inter,monospace';c2.fillText('x',ox+sz+14,oy+4);c2.fillText('y',ox-10,oy-sz-14);
+  c2.fillStyle='#6b7078';c2.fillText('1',ox-12,Y(1)+4);c2.fillText('1',X(1)-3,oy+14);
+  /* fill region */
+  c2.fillStyle='rgba(110,142,245,.14)';c2.beginPath();c2.moveTo(X(0),Y(0));
+  for(let i=0;i<=60;i++){const x=i/60;c2.lineTo(X(x),Y(x));}
+  for(let i=60;i>=0;i--){const x=i/60;c2.lineTo(X(x),Y(x*x));}
+  c2.closePath();c2.fill();
+  /* curves */
+  c2.lineWidth=1.6;
+  c2.strokeStyle='#6e8ef5';c2.beginPath();for(let i=0;i<=60;i++){const x=i/60;if(i===0)c2.moveTo(X(x),Y(x));else c2.lineTo(X(x),Y(x));}c2.stroke();
+  c2.strokeStyle='#7ec89c';c2.beginPath();for(let i=0;i<=60;i++){const x=i/60;if(i===0)c2.moveTo(X(x),Y(x*x));else c2.lineTo(X(x),Y(x*x));}c2.stroke();
+  c2.fillStyle='#6e8ef5';c2.font='12px Inter,monospace';c2.fillText('y=x',X(0.82),Y(0.62));
+  c2.fillStyle='#7ec89c';c2.fillText('y=x²',X(0.5),Y(0.28));
+  /* strips */
+  const m=8;c2.strokeStyle='#dcb366';c2.lineWidth=1.2;c2.setLineDash([3,3]);
+  if(mode==='X'){
+    for(let i=0;i<m;i++){const x=(i+0.5)/m;c2.beginPath();c2.moveTo(X(x),Y(x*x));c2.lineTo(X(x),Y(x));c2.stroke();}
+    v2.textContent='0≤x≤1, x²≤y≤x (先 y 后 x)';
+  } else {
+    for(let j=0;j<m;j++){const y=(j+0.5)/m;c2.beginPath();c2.moveTo(X(y),Y(y));c2.lineTo(X(Math.sqrt(y)),Y(y));c2.stroke();}
+    v2.textContent='0≤y≤1, y≤x≤√y (先 x 后 y)';
+  }
+  c2.setLineDash([]);
+}
+sel2.onchange=draw2;draw2();
+/* cv3: polar grid with selectable region */
+const cv3=document.getElementById('cv3'),c3=cv3.getContext('2d');
+const sel3=document.getElementById('sel3'),v3=document.getElementById('v3');
+function draw3(){
+  const mode=sel3.value;
+  const w=cv3.width,h=cv3.height;c3.clearRect(0,0,w,h);
+  const cx=w/2,cy=h/2,R=Math.min(w,h)/2-16;
+  c3.strokeStyle='#1e2026';c3.lineWidth=1;
+  for(let r=0.2;r<=1.001;r+=0.2){c3.beginPath();c3.arc(cx,cy,r*R,0,2*Math.PI);c3.stroke();}
+  for(let k=0;k<12;k++){const a=k*Math.PI/6;c3.beginPath();c3.moveTo(cx,cy);c3.lineTo(cx+Math.cos(a)*R,cy-Math.sin(a)*R);c3.stroke();}
+  c3.strokeStyle='#3a3d42';c3.beginPath();c3.moveTo(cx-R-6,cy);c3.lineTo(cx+R+6,cy);c3.moveTo(cx,cy-R-6);c3.lineTo(cx,cy+R+6);c3.stroke();
+  c3.fillStyle='#3a3d42';c3.font='11px Inter,monospace';c3.fillText('x',cx+R+8,cy+4);c3.fillText('y',cx+4,cy-R-8);
+  c3.fillStyle='rgba(110,142,245,.22)';c3.strokeStyle='#6e8ef5';c3.lineWidth=1.5;let lim='';
+  c3.beginPath();
+  if(mode==='disk'){
+    for(let k=0;k<=120;k++){const t=k/120*2*Math.PI;const px=cx+Math.cos(t)*R,py=cy-Math.sin(t)*R;if(k===0)c3.moveTo(px,py);else c3.lineTo(px,py);}c3.closePath();
+    lim='0≤θ≤2π, 0≤r≤1';
+  } else if(mode==='sector'){
+    c3.moveTo(cx,cy);
+    for(let k=0;k<=40;k++){const t=k/40*Math.PI/2;const px=cx+Math.cos(t)*R,py=cy-Math.sin(t)*R;c3.lineTo(px,py);}c3.closePath();
+    lim='0≤θ≤π/2, 0≤r≤1';
+  } else if(mode==='ring'){
+    c3.moveTo(cx+R,cy);
+    for(let k=1;k<=120;k++){const t=k/120*2*Math.PI;const px=cx+Math.cos(t)*R,py=cy-Math.sin(t)*R;c3.lineTo(px,py);}c3.closePath();
+    c3.moveTo(cx+0.5*R,cy);
+    for(let k=120;k>=0;k--){const t=k/120*2*Math.PI;const px=cx+Math.cos(t)*0.5*R,py=cy-Math.sin(t)*0.5*R;c3.lineTo(px,py);}c3.closePath();
+    lim='0≤θ≤2π, 1/2≤r≤1';
+  } else {
+    for(let k=0;k<=120;k++){const t=k/120*2*Math.PI;const r=(1+Math.cos(t))*R/2;const px=cx+Math.cos(t)*r,py=cy-Math.sin(t)*r;if(k===0)c3.moveTo(px,py);else c3.lineTo(px,py);}c3.closePath();
+    lim='r=1+cosθ (0≤θ≤2π)';
+  }
+  c3.fill('evenodd');c3.stroke();
+  v3.textContent=lim;
+}
+sel3.onchange=draw3;draw3();
+/* cv4: oblique view of paraboloid z=x^2+y^2 capped by z=1 */
+const cv4=document.getElementById('cv4'),c4=cv4.getContext('2d');
+const s4=document.getElementById('s4'),v4=document.getElementById('v4'),v4b=document.getElementById('v4b');
+const sx=180,sy=95,sz=150,cA=0.866,sA=0.5,ox=390,oy=235;
+function P(x,y,z){return [ox+x*sx+y*sy*cA, oy-z*sz-y*sy*sA];}
+function ell(rad,z){
+  c4.beginPath();
+  for(let k=0;k<=60;k++){const t=k/60*2*Math.PI;const p=P(rad*Math.cos(t),rad*Math.sin(t),z);if(k===0)c4.moveTo(p[0],p[1]);else c4.lineTo(p[0],p[1]);}
+  c4.closePath();
+}
+function draw4(){
+  const r0=+s4.value/100;v4.textContent=r0.toFixed(2);
+  const w=cv4.width,h=cv4.height;c4.clearRect(0,0,w,h);
+  /* floor parallelogram */
+  c4.strokeStyle='#272a31';c4.lineWidth=1;
+  const f1=P(-1,-1,0),f2=P(1,-1,0),f3=P(1,1,0),f4=P(-1,1,0);
+  c4.beginPath();c4.moveTo(f1[0],f1[1]);c4.lineTo(f2[0],f2[1]);c4.lineTo(f3[0],f3[1]);c4.lineTo(f4[0],f4[1]);c4.closePath();c4.stroke();
+  /* disk D on floor */
+  c4.fillStyle='rgba(110,142,245,.12)';ell(1,0);c4.fill();c4.strokeStyle='#6e8ef5';c4.lineWidth=1.2;c4.stroke();
+  /* paraboloid level curves (radius = sqrt(z)) */
+  c4.strokeStyle='#dcb366';c4.lineWidth=1;c4.setLineDash([4,3]);
+  for(let z=0.2;z<=1.001;z+=0.2){ell(Math.sqrt(z),z);c4.stroke();}
+  c4.setLineDash([]);
+  /* front meridians */
+  c4.strokeStyle='#dcb366';c4.lineWidth=1.2;
+  for(const th of [-Math.PI/4,-3*Math.PI/4]){
+    c4.beginPath();
+    for(let k=0;k<=30;k++){const z=k/30;const r=Math.sqrt(z);const p=P(r*Math.cos(th),r*Math.sin(th),z);if(k===0)c4.moveTo(p[0],p[1]);else c4.lineTo(p[0],p[1]);}
+    c4.stroke();
+  }
+  /* cap plane z=1 */
+  c4.fillStyle='rgba(126,200,156,.14)';ell(1,1);c4.fill();c4.strokeStyle='#7ec89c';c4.lineWidth=1.5;c4.stroke();
+  /* representative column */
+  const th=-Math.PI/4,bx=r0*Math.cos(th),by=r0*Math.sin(th);
+  const p1=P(bx,by,r0*r0),p2=P(bx,by,1);
+  c4.strokeStyle='#6e8ef5';c4.lineWidth=2.5;c4.beginPath();c4.moveTo(p1[0],p1[1]);c4.lineTo(p2[0],p2[1]);c4.stroke();
+  c4.fillStyle='#6e8ef5';c4.beginPath();c4.arc(p1[0],p1[1],3.5,0,7);c4.fill();c4.beginPath();c4.arc(p2[0],p2[1],3.5,0,7);c4.fill();
+  /* labels */
+  c4.font='11px Inter,monospace';
+  c4.fillStyle='#dcb366';c4.fillText('z=x²+y² (抛物面)',12,22);
+  c4.fillStyle='#7ec89c';c4.fillText('z=1 (平面)',p2[0]+8,p2[1]-4);
+  c4.fillStyle='#6e8ef5';c4.fillText('D: x²+y²≤1 (投影)',12,h-12);
+  v4b.textContent='柱高 = 1 - r² = '+(1-r0*r0).toFixed(3);
+}
+s4.oninput=draw4;draw4();
+</script>
+</body>
+</html>
