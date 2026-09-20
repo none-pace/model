@@ -4,11 +4,6 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-    inputs:
-      deploy:
-        description: Deploy after GitHub Pages is enabled for this private repository
-        type: boolean
-        default: false
 
 permissions:
   contents: read
@@ -42,7 +37,6 @@ jobs:
           path: _site
 
   deploy:
-    if: vars.PAGES_ENABLED == 'true' || (github.event_name == 'workflow_dispatch' && inputs.deploy)
     needs: check-and-build
     runs-on: ubuntu-latest
     permissions:

@@ -1,21 +1,20 @@
 # 网站发布
 
-源码仓库为 `none-pace/model`，保持 Private。网站为纯静态 HTML、CSS 和 JavaScript。
+源码仓库为 [none-pace/model](https://github.com/none-pace/model)，设为 Public。网站为纯静态 HTML、CSS 和 JavaScript，地址为 https://none-pace.github.io/model/ 。
 
-## 当前状态
+## 自动部署
 
-2026-09-20 已尝试为此私有仓库创建 GitHub Pages。GitHub API 返回 HTTP 422：`Your current plan does not support GitHub Pages for this repository.` 因此目前没有已上线的 Pages 地址。不能通过更改工作流绕过账号套餐限制。
+仓库 Settings → Pages 的 Source 使用 GitHub Actions，并启用 HTTPS。
 
-工作流 `.github/workflows/pages.yml` 已配置：每次推送 main 检查数学模型、链接和原章节结构，生成仅含网页和 assets 的部署产物。`PAGES_ENABLED` 未开启时不会执行发布；校验和产物生成照常进行。
+工作流 `.github/workflows/pages.yml` 在每次推送 main 时运行：
 
-## 账号支持私有仓库 Pages 后
+1. 检查数学模型、阅读链接、内容覆盖账和原章节结构。
+2. 运行 `node scripts/build-site.cjs`，生成仅含根目录网页与 `assets/` 的 `_site/` 产物。
+3. 检查与构建成功后，通过 GitHub Pages 发布网站。
 
-1. 在仓库 Settings → Pages 中启用 Pages，Source 选择 GitHub Actions。
-2. 在 Settings → Secrets and variables → Actions → Variables 添加 `PAGES_ENABLED`，值为 `true`。
-3. 在 Actions 手动运行 `Check and publish math notes`，勾选 deploy；之后推送 main 会自动发布。
-4. 实际网站地址以成功的部署任务输出为准，通常为 `https://none-pace.github.io/model/`。
+也可以在 Actions 中手动运行 `Check and publish math notes`。无需额外部署变量或访问令牌。构建检查失败时不发布新版本；部署结果及网站地址可在工作流的 `deploy` 任务中查看。
 
-私有仓库不等于私密网页：常规 GitHub Pages 网站可被公开访问。如果需要网站也有登录保护，应另外选择支持访问控制的托管方式。网站构建不会包含 `.git`、本地浏览器记录、检查脚本或工作文档；浏览器执行所需的 HTML、JavaScript 和资源会随网页提供。
+仓库内容、提交历史和网站均可公开访问。网站构建不会包含 `.git`、本地浏览器记录、检查脚本或工作文档；网页所需的 HTML、JavaScript 和资源随网站提供。阅读进度保存在各浏览器本地，不会上传或跨设备同步；线上域名与本地预览的进度各自独立。
 
 ## 本地检查部署产物
 
