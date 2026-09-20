@@ -1,0 +1,124 @@
+{
+  "revision": "9f9ffa348bf37f5a0cf637b08a7e9e6ddf0290d2",
+  "chapters": [
+    {
+      "source": "math_ch1.html",
+      "id": "chapter-01",
+      "sections": 8,
+      "canvases": 4,
+      "solutions": 5
+    },
+    {
+      "source": "math_seq.html",
+      "id": "sequence-practice",
+      "sections": 11,
+      "canvases": 3,
+      "solutions": 8
+    },
+    {
+      "source": "math_ch02.html",
+      "id": "chapter-02",
+      "sections": 14,
+      "canvases": 4,
+      "solutions": 8
+    },
+    {
+      "source": "math_ch03.html",
+      "id": "chapter-03",
+      "sections": 11,
+      "canvases": 4,
+      "solutions": 10
+    },
+    {
+      "source": "math_ch04.html",
+      "id": "chapter-04",
+      "sections": 10,
+      "canvases": 4,
+      "solutions": 10
+    },
+    {
+      "source": "math_ch05.html",
+      "id": "chapter-05",
+      "sections": 10,
+      "canvases": 3,
+      "solutions": 9
+    },
+    {
+      "source": "math_ch06.html",
+      "id": "chapter-06",
+      "sections": 9,
+      "canvases": 4,
+      "solutions": 8
+    },
+    {
+      "source": "math_ch07.html",
+      "id": "chapter-07",
+      "sections": 11,
+      "canvases": 4,
+      "solutions": 8
+    },
+    {
+      "source": "math_ch08.html",
+      "id": "chapter-08",
+      "sections": 12,
+      "canvases": 1,
+      "solutions": 8
+    },
+    {
+      "source": "math_ch09.html",
+      "id": "chapter-09",
+      "sections": 11,
+      "canvases": 4,
+      "solutions": 9
+    },
+    {
+      "source": "math_ch10.html",
+      "id": "chapter-10",
+      "sections": 10,
+      "canvases": 1,
+      "solutions": 8
+    },
+    {
+      "source": "math_ch11.html",
+      "id": "chapter-11",
+      "sections": 11,
+      "canvases": 2,
+      "solutions": 8
+    },
+    {
+      "source": "math_ch12.html",
+      "id": "chapter-12",
+      "sections": 11,
+      "canvases": 2,
+      "solutions": 8
+    },
+    {
+      "source": "math_ch13.html",
+      "id": "chapter-13",
+      "sections": 10,
+      "canvases": 1,
+      "solutions": 8
+    },
+    {
+      "source": "math_ch14.html",
+      "id": "chapter-14",
+      "sections": 7,
+      "canvases": 1,
+      "solutions": 8
+    },
+    {
+      "source": "math_ch15.html",
+      "id": "chapter-15",
+      "sections": 8,
+      "canvases": 1,
+      "solutions": 8
+    },
+    {
+      "source": "math_ch16.html",
+      "id": "chapter-16",
+      "sections": 6,
+      "canvases": 1,
+      "solutions": 8
+    }
+  ]
+}

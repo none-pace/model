@@ -1,1 +1,4 @@
 .zcode/
+.playwright-cli/
+output/playwright/
+_site/

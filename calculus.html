@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>数学笔记 · 从理解到解题</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/textbook.css">
+  <link rel="stylesheet" href="assets/book.css">
+  <link rel="stylesheet" href="assets/reading.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script defer src="assets/elementary.js"></script>
+  <script defer src="assets/lessons.js"></script>
+  <script defer src="assets/foundations.js"></script>
+  <script defer src="assets/linear.js"></script>
+  <script defer src="assets/preparatory.js"></script>
+  <script defer src="assets/calculus-theorems.js"></script>
+  <script defer src="assets/books/derivative.js"></script>
+  <script defer src="assets/books/linear-algebra.js"></script>
+  <script defer src="assets/books/linear-systems.js"></script>
+  <script defer src="assets/catalog.js"></script>
+  <script defer src="assets/coverage.js"></script>
+  <script defer src="assets/labs.js"></script>
+  <script defer src="assets/linear-labs.js"></script>
+  <script defer src="assets/preparatory-labs.js"></script>
+  <script defer src="assets/book-labs.js"></script>
+  <script defer src="assets/book-reader.js"></script>
+  <script defer src="assets/reader.js"></script>
+</head>
+<body class="sequential-reader">
+  <a class="skip" href="#reading">跳到正文</a>
+  <header class="topbar"><a class="brand" href="math_index.html"><span class="brand-mark">∫</span> 数学笔记</a><span class="top-note">从基础依次读起</span><button id="menu-toggle" aria-expanded="false" aria-controls="sidebar">目录</button></header>
+  <aside id="sidebar" class="sidebar" aria-label="学习目录">
+    <p class="sidebar-heading">全书目录 <a href="math_index.html#curriculum">总览</a></p>
+    <div class="study-progress"><span id="progress-text"></span><progress id="progress" value="0" max="1" aria-label="已掌握的小节"></progress></div>
+    <nav id="chapters" aria-label="章节"></nav>
+    <details class="reading-tools"><summary>查阅工具</summary><label class="search-label" for="search">查找概念、公式或方法</label><input id="search" type="search" placeholder="例如：链式法则、换元"><button id="atlas-toggle" aria-expanded="false" aria-controls="atlas">查阅公式与图解</button></details>
+  </aside>
+  <main id="reading" tabindex="-1"></main>
+  <dialog id="atlas" aria-labelledby="atlas-title"><div class="dialog-head"><h2 id="atlas-title">公式图谱</h2><button id="atlas-close" aria-label="关闭公式图谱">关闭</button></div><p>从公式进入对应实验，先观察，再推导。图谱列出已配套的公式实验；章节中的其他公式仍可在专题推导中阅读，不把它们标成已完成独立图解。</p><div id="atlas-list"></div></dialog>
+  <noscript><p class="no-script">本教材需要启用 JavaScript 才能显示正文与交互实验。启用后重新载入本页，或先查看<a href="math_index.html#curriculum">全书学习规划</a>。</p></noscript>
+</body>
+</html>
